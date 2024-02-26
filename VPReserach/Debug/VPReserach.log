@@ -1,0 +1,153 @@
+﻿  design.cpp
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1,1): warning C4819: 檔案含有無法在目前字碼頁 (950) 中表示的字元。請以 Unicode 格式儲存檔案以防止資料遺失
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Header\design.h(1,1): warning C4819: 檔案含有無法在目前字碼頁 (950) 中表示的字元。請以 Unicode 格式儲存檔案以防止資料遺失
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Header\cell_type.h(1,1): warning C4819: 檔案含有無法在目前字碼頁 (950) 中表示的字元。請以 Unicode 格式儲存檔案以防止資料遺失
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Header\pin.h(1,1): warning C4819: 檔案含有無法在目前字碼頁 (950) 中表示的字元。請以 Unicode 格式儲存檔案以防止資料遺失
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Header\pin.h(50,21): warning C4018: '<': signed/unsigned 不相符
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Header\cell.h(1,1): warning C4819: 檔案含有無法在目前字碼頁 (950) 中表示的字元。請以 Unicode 格式儲存檔案以防止資料遺失
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Header\row.h(1,1): warning C4819: 檔案含有無法在目前字碼頁 (950) 中表示的字元。請以 Unicode 格式儲存檔案以防止資料遺失
+C:\boost\boost_1_77_0\boost\geometry\formulas\karney_inverse.hpp(1,1): warning C4819: 檔案含有無法在目前字碼頁 (950) 中表示的字元。請以 Unicode 格式儲存檔案以防止資料遺失
+C:\boost\boost_1_77_0\boost\geometry\formulas\area_formulas.hpp(1,1): warning C4819: 檔案含有無法在目前字碼頁 (950) 中表示的字元。請以 Unicode 格式儲存檔案以防止資料遺失
+C:\boost\boost_1_77_0\boost\geometry\formulas\vertex_latitude.hpp(1,1): warning C4819: 檔案含有無法在目前字碼頁 (950) 中表示的字元。請以 Unicode 格式儲存檔案以防止資料遺失
+C:\boost\boost_1_77_0\boost\geometry\strategy\geographic\area.hpp(1,1): warning C4819: 檔案含有無法在目前字碼頁 (950) 中表示的字元。請以 Unicode 格式儲存檔案以防止資料遺失
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(364,20): warning C4018: '<': signed/unsigned 不相符
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(380,20): warning C4018: '<': signed/unsigned 不相符
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(514,20): warning C4018: '<': signed/unsigned 不相符
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(523,21): warning C4018: '<': signed/unsigned 不相符
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(728,1): warning C4819: 檔案含有無法在目前字碼頁 (950) 中表示的字元。請以 Unicode 格式儲存檔案以防止資料遺失
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(841,20): warning C4244: '正在初始化': 將 'double' 轉換為 'int'，由於類型不同，可能導致資料遺失
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(895,23): warning C4244: '=': 將 'double' 轉換為 'int'，由於類型不同，可能導致資料遺失
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(901,23): warning C4018: '<': signed/unsigned 不相符
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(944,93): warning C4244: '引數': 將 'double' 轉換為 'const CoordinateType'，由於類型不同，可能導致資料遺失
+          with
+          [
+              CoordinateType=float
+          ]
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(944,47): warning C4244: '引數': 將 'double' 轉換為 'const CoordinateType'，由於類型不同，可能導致資料遺失
+          with
+          [
+              CoordinateType=float
+          ]
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(945,86): warning C4244: '引數': 將 'double' 轉換為 'const CoordinateType'，由於類型不同，可能導致資料遺失
+          with
+          [
+              CoordinateType=float
+          ]
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(945,40): warning C4244: '引數': 將 'double' 轉換為 'const CoordinateType'，由於類型不同，可能導致資料遺失
+          with
+          [
+              CoordinateType=float
+          ]
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(953,23): warning C4018: '<': signed/unsigned 不相符
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(957,100): warning C4244: '引數': 將 'double' 轉換為 'const CoordinateType'，由於類型不同，可能導致資料遺失
+          with
+          [
+              CoordinateType=float
+          ]
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(957,53): warning C4244: '引數': 將 'double' 轉換為 'const CoordinateType'，由於類型不同，可能導致資料遺失
+          with
+          [
+              CoordinateType=float
+          ]
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(958,91): warning C4244: '引數': 將 'double' 轉換為 'const CoordinateType'，由於類型不同，可能導致資料遺失
+          with
+          [
+              CoordinateType=float
+          ]
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(958,44): warning C4244: '引數': 將 'double' 轉換為 'const CoordinateType'，由於類型不同，可能導致資料遺失
+          with
+          [
+              CoordinateType=float
+          ]
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1020,87): warning C4244: '引數': 將 'double' 轉換為 'const CoordinateType'，由於類型不同，可能導致資料遺失
+          with
+          [
+              CoordinateType=float
+          ]
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1020,45): warning C4244: '引數': 將 'double' 轉換為 'const CoordinateType'，由於類型不同，可能導致資料遺失
+          with
+          [
+              CoordinateType=float
+          ]
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1021,78): warning C4244: '引數': 將 'double' 轉換為 'const CoordinateType'，由於類型不同，可能導致資料遺失
+          with
+          [
+              CoordinateType=float
+          ]
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1021,36): warning C4244: '引數': 將 'double' 轉換為 'const CoordinateType'，由於類型不同，可能導致資料遺失
+          with
+          [
+              CoordinateType=float
+          ]
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1092,20): warning C4018: '<': signed/unsigned 不相符
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1105,20): warning C4018: '<': signed/unsigned 不相符
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1192,21): warning C4018: '<': signed/unsigned 不相符
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1225,20): warning C4018: '<': signed/unsigned 不相符
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1257,24): warning C4018: '<': signed/unsigned 不相符
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1290,1): warning C4819: 檔案含有無法在目前字碼頁 (950) 中表示的字元。請以 Unicode 格式儲存檔案以防止資料遺失
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1311,23): warning C4018: '<': signed/unsigned 不相符
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1321,24): warning C4018: '<': signed/unsigned 不相符
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1385,26): warning C4018: '<': signed/unsigned 不相符
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1416,23): warning C4018: '<': signed/unsigned 不相符
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1477,21): warning C4018: '<': signed/unsigned 不相符
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1482,23): warning C4018: '<': signed/unsigned 不相符
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1591,20): warning C4018: '<': signed/unsigned 不相符
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1619,21): warning C4018: '<': signed/unsigned 不相符
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1639,49): warning C4244: '引數': 將 'double' 轉換為 'const CoordinateType'，由於類型不同，可能導致資料遺失
+          with
+          [
+              CoordinateType=float
+          ]
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1639,24): warning C4244: '引數': 將 'double' 轉換為 'const CoordinateType'，由於類型不同，可能導致資料遺失
+          with
+          [
+              CoordinateType=float
+          ]
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1640,41): warning C4244: '引數': 將 'double' 轉換為 'const CoordinateType'，由於類型不同，可能導致資料遺失
+          with
+          [
+              CoordinateType=float
+          ]
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1640,17): warning C4244: '引數': 將 'double' 轉換為 'const CoordinateType'，由於類型不同，可能導致資料遺失
+          with
+          [
+              CoordinateType=float
+          ]
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1729,20): warning C4018: '<': signed/unsigned 不相符
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1747,23): warning C4244: '引數': 將 'double' 轉換為 'const CoordinateType'，由於類型不同，可能導致資料遺失
+          with
+          [
+              CoordinateType=float
+          ]
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1747,15): warning C4244: '引數': 將 'double' 轉換為 'const CoordinateType'，由於類型不同，可能導致資料遺失
+          with
+          [
+              CoordinateType=float
+          ]
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1747,46): warning C4244: '引數': 將 'double' 轉換為 'const CoordinateType'，由於類型不同，可能導致資料遺失
+          with
+          [
+              CoordinateType=float
+          ]
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1747,38): warning C4244: '引數': 將 'double' 轉換為 'const CoordinateType'，由於類型不同，可能導致資料遺失
+          with
+          [
+              CoordinateType=float
+          ]
+  main.cpp
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Header\design.h(1,1): warning C4819: 檔案含有無法在目前字碼頁 (950) 中表示的字元。請以 Unicode 格式儲存檔案以防止資料遺失
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Header\cell_type.h(1,1): warning C4819: 檔案含有無法在目前字碼頁 (950) 中表示的字元。請以 Unicode 格式儲存檔案以防止資料遺失
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Header\pin.h(1,1): warning C4819: 檔案含有無法在目前字碼頁 (950) 中表示的字元。請以 Unicode 格式儲存檔案以防止資料遺失
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Header\pin.h(50,21): warning C4018: '<': signed/unsigned 不相符
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Header\cell.h(1,1): warning C4819: 檔案含有無法在目前字碼頁 (950) 中表示的字元。請以 Unicode 格式儲存檔案以防止資料遺失
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Header\row.h(1,1): warning C4819: 檔案含有無法在目前字碼頁 (950) 中表示的字元。請以 Unicode 格式儲存檔案以防止資料遺失
+C:\boost\boost_1_77_0\boost\geometry\formulas\karney_inverse.hpp(1,1): warning C4819: 檔案含有無法在目前字碼頁 (950) 中表示的字元。請以 Unicode 格式儲存檔案以防止資料遺失
+C:\boost\boost_1_77_0\boost\geometry\formulas\area_formulas.hpp(1,1): warning C4819: 檔案含有無法在目前字碼頁 (950) 中表示的字元。請以 Unicode 格式儲存檔案以防止資料遺失
+C:\boost\boost_1_77_0\boost\geometry\formulas\vertex_latitude.hpp(1,1): warning C4819: 檔案含有無法在目前字碼頁 (950) 中表示的字元。請以 Unicode 格式儲存檔案以防止資料遺失
+C:\boost\boost_1_77_0\boost\geometry\strategy\geographic\area.hpp(1,1): warning C4819: 檔案含有無法在目前字碼頁 (950) 中表示的字元。請以 Unicode 格式儲存檔案以防止資料遺失
+  正在產生程式碼...
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1097): warning C4715: 'design::find_outpin': 不是所有控制路徑都傳回值
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1112): warning C4715: 'design::choose_base_pin_rect': 不是所有控制路徑都傳回值
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1718): warning C4715: 'design::oneMetal_VP_overlap': 不是所有控制路徑都傳回值
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Header\pin.h(19): warning C4715: 'RECT::Point': 不是所有控制路徑都傳回值
+  VPReserach.vcxproj -> C:\Users\cnctu\source\repos\VPResearch\Debug\VPReserach.exe
