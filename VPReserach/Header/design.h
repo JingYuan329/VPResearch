@@ -13,6 +13,7 @@
 
 #include <boost/geometry/geometries/point.hpp>
 #include <boost/geometry/geometries/box.hpp>
+#include <boost/geometry/algorithms/overlaps.hpp>
 
 using namespace std;
 

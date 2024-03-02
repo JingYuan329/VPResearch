@@ -31,6 +31,10 @@ public:
 		else return 1;					//vertical
 	};
 
+	box RECT2box() {
+		return box(point(Point(1, 'x'), Point(1, 'y')), point(Point(2, 'x'), Point(2, 'y')));
+	};
+
 	int _access_flag = 0;
 	//get_point(2, x) = 200.200;
 private:

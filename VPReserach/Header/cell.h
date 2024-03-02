@@ -2,7 +2,21 @@
 #include"cell_type.h"
 #include<iostream>
 #include<string>
+
+#include <boost/geometry.hpp>
+#include <boost/geometry/index/rtree.hpp>
+
+#include <boost/geometry/geometries/point.hpp>
+#include <boost/geometry/geometries/box.hpp>
+
 using namespace std;
+
+namespace bg = boost::geometry;
+namespace bgi = boost::geometry::index;
+
+typedef bg::model::point<float, 2, bg::cs::cartesian> point;
+typedef bg::model::box<point> box;
+typedef std::pair<box, unsigned> value;
 class cell_type;
 
 class cell
@@ -24,6 +38,9 @@ public:
 	string get_parent_cell_type() { return _parent; };
 	void set_which_row_name(string _ROW_NAME) { _which_row = _ROW_NAME; };       
 	string get_which_row_name() { return _which_row; };
+	cell_type* get_cell_type() { return ct; };                         
+	void set_cell_type(cell_type* CT) { ct = CT; };
+
 	void reset_this_pin() {
 		if (get_cell_type()->find_outpin() != NULL) {
 			get_cell_type()->find_outpin()->_reset_all_RECT_access();
@@ -42,16 +59,15 @@ public:
 	//	
 	//};
 
-	cell_type* get_cell_type() { return ct; };                         //////////////之後可以用用看
-	void set_cell_type(cell_type* CT) { ct=CT; };
+	
 	vector<RECT>_VP;
 	vector<string>_VP_layer;
 	string _new_cell_type_name="";
 	string _VP_pin_name = "";
 
-	vector<box> _buffer_overlap_m1pin;
-	vector<box> _buffer_overlap_m2VP;
-	vector<box> _buffer_overlap_m3m4PG;
+	vector<value> _buffer_overlap_m2VP;
+	vector<value> _buffer_overlap_m3PG;
+	vector<value> _buffer_overlap_m4PG;
 
 private:
 	string _cell_type_name;
