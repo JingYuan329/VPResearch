@@ -16,6 +16,7 @@ int main(int argc, char *argv[]) {
 	Design.output_lef_file(argv[3]);*/
 
 	//Design.insert_some_VP_initial(0.1);
+	//Design.output_lef_file(argv[3]);
 	Design.make_rtree_M1();
 	Design.make_PG_rtree_M3M4();
 	Design.insert_dodge_VP(0.1);

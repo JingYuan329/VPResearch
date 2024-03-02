@@ -1,26 +1,27 @@
 #include "design.h"
 #include<iostream>
 using namespace std;
+using namespace std;
 
 void design::parser_tech_lef()
 {
 	pair<int, double>temp_metal;
 	_units = 1000;
-	for (int i = 0; i < 5; ++i){                          //æ‰‹å‹•å¯«å…¥layer metalçš„æ–¹å‘å’ŒPITCH    //å¯«æ­»
+	for (int i = 0; i < 5; ++i){                          //¤â°Ê¼g¤Jlayer metalªº¤è¦V©MPITCH    //¼g¦º
 		temp_metal.first = i % 2;
 		temp_metal.second = 0.200;
 		_layer_metal.push_back(temp_metal);
 	}
 
-	for (int i = 0; i < 4; ++i) {                          //æ‰‹å‹•å¯«å…¥ via layerçš„SPACING
+	for (int i = 0; i < 4; ++i) {                          //¤â°Ê¼g¤J via layerªºSPACING
 		_via_layer_spacing.push_back(0.10);
 	}
 
-	for (int i = 0; i < 5; ++i) {                          //æ‰‹å‹•å¯«å…¥ layerçš„pitch
+	for (int i = 0; i < 5; ++i) {                          //¤â°Ê¼g¤J layerªºpitch
 		_metal_layer_pitch.push_back(0.20);
 	}
 
-	for (int i = 0; i < 5; ++i) {                          //æ‰‹å‹•å¯«å…¥layerçš„width
+	for (int i = 0; i < 5; ++i) {                          //¤â°Ê¼g¤Jlayerªºwidth
 		_metal_layer_width.push_back(0.10);
 	}
 
@@ -77,7 +78,7 @@ void design::parser_cell_lef(string filename)
 								fin >> LA_NAME;     //metal2  or metal1
 								fin >> temp;     //;
 
-									   //if  PIN o:  åšè½æˆ2å€‹RECT, æœ‰å¯èƒ½å…©å€‹RECTåœ¨ä¸åŒå±¤  , é€™è£¡æœƒæœ‰éŒ¯
+									   //if  PIN o:  °µ¸¨¦¨2­ÓRECT, ¦³¥i¯à¨â­ÓRECT¦b¤£¦P¼h  , ³o¸Ì·|¦³¿ù
 								fin >> temp2;    //RECT
 								while (temp2 == "RECT") {
 									fin >> rect1;  fin >> rect2;  fin >> rect3;  fin >> rect4;
@@ -181,7 +182,7 @@ void design::parser_def(string filename)
 {
 	ifstream fin;
 	string temp, temp_name, temp_type,temp2, rect1, rect2, rect3, rect4,r5,r6;
-	string _which_pg;
+	string _which_pg, _p_or_f;
 	cout << "start parser  def " << endl;
 	fin.open(filename, ios::in);
 	if (!fin.is_open())  cout << "cell.lef is not open ! " << endl;
@@ -234,11 +235,11 @@ void design::parser_def(string filename)
 					fin >> temp_name;    //h6/g60632_u1      //
 					fin >> temp_type;     //na02f01                    //
 					fin >> temp;     //"+"
-					fin >> temp;     //"PLACED"   or   "SOURCE"
-					if (temp == "SOURCE") {
+					fin >> _p_or_f;     //"PLACED"   or   "SOURCE"
+					if (_p_or_f == "SOURCE") {
 						fin >> temp;      //"TIMING"
 						fin >> temp;    //"+"
-						fin >> temp;    //"PLACED"
+						fin >> _p_or_f;    //"PLACED"
 					}
 					fin >> temp;     //"("
 					fin >> rect1;     //283000                              //
@@ -249,13 +250,13 @@ void design::parser_def(string filename)
 					fin >> temp;    //";"
 					fin >> temp;     //"-"    or "END"
 
-				//  if å¯ä»¥åœ¨_all_cell_type_new å…§æ‰¾åˆ°æ­¤cell_type
-				//new ä¸€æ–°cell , åŠ å…¥  temp_type
-					//cell.lefé‡æ¥ æˆmap:  _all_cell_type_new
+				//  if ¥i¥H¦b_all_cell_type_new ¤º§ä¨ì¦¹cell_type
+				//new ¤@·scell , ¥[¤J  temp_type
+					//cell.lef­«±µ ¦¨map:  _all_cell_type_new
 
 					auto iter = _all_cell_type_new.find(temp_type);
 					if (iter != _all_cell_type_new.end()) {
-						cell* _tempcell = new cell(temp_type, temp_name, rect1, rect2, temp2);
+						cell* _tempcell = new cell(temp_type, temp_name, rect1, rect2, temp2, _p_or_f);
 						_tempcell->set_parent_cell_type(temp_type);                            //set this cell's cell_type (string)
 						_tempcell->set_cell_type(iter->second);						    //set this cell's cell_type (pointer)
 
@@ -326,14 +327,14 @@ void design::parser_def(string filename)
 	//}
 	//_out_pin->_obs= _out_pin->get_RECT();
 	//for (int i = 0; i < _out_pin->_obs.size(); ++i) {
-	//	if (_all_layer[_out_pin->getlayer()]->get_direction() == 0) {     //pinåœ¨çš„é‚£å€‹metal (1or2) æ˜¯ç¹horizontal
-	//		if (abs(_out_pin->_obs.at(i).first.first - _out_pin->_obs.at(i).second.first) > abs(_out_pin->_obs.at(i).first.second - _out_pin->_obs.at(i).second.second)) {   //x2-x2 > y1-y2    //æ˜¯ä¸€å€‹æ°´å¹³å½¢ç‹€çš„pin
+	//	if (_all_layer[_out_pin->getlayer()]->get_direction() == 0) {     //pin¦bªº¨º­Ómetal (1or2) ¬OÂ¶horizontal
+	//		if (abs(_out_pin->_obs.at(i).first.first - _out_pin->_obs.at(i).second.first) > abs(_out_pin->_obs.at(i).first.second - _out_pin->_obs.at(i).second.second)) {   //x2-x2 > y1-y2    //¬O¤@­Ó¤ô¥­§Îª¬ªºpin
 	//			_which_pin = i;
 	//			break;
 	//		}
 	//	}
-	//	else {									//pinåœ¨çš„é‚£å€‹metal (1or2) æ˜¯ç¹vertical
-	//		if (abs(_out_pin->_obs.at(i).first.second - _out_pin->_obs.at(i).second.second) > abs(_out_pin->_obs.at(i).first.first - _out_pin->_obs.at(i).second.first)) {   // y1-y2 > x2-x2   //æ˜¯ä¸€å€‹å‚ç›´ç·šå½¢ç‹€çš„pin
+	//	else {									//pin¦bªº¨º­Ómetal (1or2) ¬OÂ¶vertical
+	//		if (abs(_out_pin->_obs.at(i).first.second - _out_pin->_obs.at(i).second.second) > abs(_out_pin->_obs.at(i).first.first - _out_pin->_obs.at(i).second.first)) {   // y1-y2 > x2-x2   //¬O¤@­Ó««ª½½u§Îª¬ªºpin
 	//			_which_pin = i;
 	//			break;
 	//		}
@@ -341,17 +342,17 @@ void design::parser_def(string filename)
 	//	}
 	//}
 	//
-	////å·²çŸ¥é“è¦åœ¨ç¬¬iå€‹pinä¸Šæ‰“ä¸Šé¢é‚£æ›¾layerçš„VP				//_out_pin->_obs.at(_which_pin)     , is a  pair<pair<double, double>, pair<double, double>>
+	////¤wª¾¹D­n¦b²Äi­Ópin¤W¥´¤W­±¨º´¿layerªºVP				//_out_pin->_obs.at(_which_pin)     , is a  pair<pair<double, double>, pair<double, double>>
 	////map<string, layer*>::iterator
 	//auto iter = _all_layer.find(_out_pin->getlayer());
 	//iter++;
 	//for (; iter != _all_layer.end(); iter++) {
 	//	_out_pin->_obs.at(_which_pin).first.first;
-	//	//////////////////////////////////////////////////////////æ–œçš„è¦æ€éº¼åŠƒåˆ†æ¯ä¸€å±¤çš„ç›¸é„°å…©metal......../////////////////////////////
+	//	//////////////////////////////////////////////////////////±×ªº­n«ç»ò¹º¤À¨C¤@¼hªº¬Û¾F¨âmetal......../////////////////////////////
 	//}
-	////å¯«ä¸€äº›æ±è¥¿åˆ°lefæª”
+	////¼g¤@¨ÇªF¦è¨ìlefÀÉ
 }*/
-
+	
 vector<RECT>design::BuildVP(int dir,  vector<RECT> &pre_vp, double _wire_width,int _slice) {
 	double XRange[2] = { DBL_MAX,DBL_MIN };
 	double YRange[2] = { DBL_MAX,DBL_MIN };
@@ -361,7 +362,7 @@ vector<RECT>design::BuildVP(int dir,  vector<RECT> &pre_vp, double _wire_width,i
 	double VP_Y[2] = { 0 };
 	vector<RECT> ans;
 
-	for (int i = 0; i < pre_vp.size(); ++i) { //æ‰¾å‡ºæœ€å°x æœ€å°y
+	for (int i = 0; i < pre_vp.size(); ++i) { //§ä¥X³Ì¤px ³Ì¤py
 		if (pre_vp[i].Point(1,'x') < XRange[0]) {
 			XRange[0] = pre_vp[i].Point(1, 'x'); //X1
 		}
@@ -377,7 +378,7 @@ vector<RECT>design::BuildVP(int dir,  vector<RECT> &pre_vp, double _wire_width,i
 		}
 	}
 
-	for (int i = 0; i < pre_vp.size(); ++i) { //æ‰¾å‡ºæœ€å¤§x æœ€å¤§y
+	for (int i = 0; i < pre_vp.size(); ++i) { //§ä¥X³Ì¤jx ³Ì¤jy
 		if (pre_vp[i].Point(1, 'x') > XRange[1]) {
 			XRange[1] = pre_vp[i].Point(1, 'x'); //X1
 		}
@@ -393,38 +394,38 @@ vector<RECT>design::BuildVP(int dir,  vector<RECT> &pre_vp, double _wire_width,i
 		}
 	}
 
-	if ((XRange[1] - XRange[0] < min_XRange) && (YRange[1] - YRange[0] < min_YRange)) {      //ç¬¬ä¸€å±¤ä¸Šæ–¹ (æ‰“ç¬¬äºŒå±¤æ™‚) : ä¸å¤ é•·ä¹Ÿä¸å¤ å¯¬
-		if (dir == 1) {               //ç¬¬ä¸€å±¤æ˜¯æ°´å¹³èµ°å‘ï¼Œç¬¬äºŒå±¤æ˜¯å‚ç›´èµ°å‘
-			double t = (min_YRange - (YRange[1] - YRange[0])) / 2;        //åªæœ‰yèƒ½å»¶é•· (xå»¶é•·çš„è©±å°±æœƒç¢°ä¸åˆ°ç¬¬ä¸€å±¤çš„pin (é–‹è·¯)
+	if ((XRange[1] - XRange[0] < min_XRange) && (YRange[1] - YRange[0] < min_YRange)) {      //²Ä¤@¼h¤W¤è (¥´²Ä¤G¼h®É) : ¤£°÷ªø¤]¤£°÷¼e
+		if (dir == 1) {               //²Ä¤@¼h¬O¤ô¥­¨«¦V¡A²Ä¤G¼h¬O««ª½¨«¦V
+			double t = (min_YRange - (YRange[1] - YRange[0])) / 2;        //¥u¦³y¯à©µªø (x©µªøªº¸Ü´N·|¸I¤£¨ì²Ä¤@¼hªºpin (¶}¸ô)
 			YRange[0] -= t;
 			YRange[1] += t;
 		}
-		else {				//ç¬¬ä¸€å±¤æ˜¯å‚ç›´èµ°å‘ï¼Œç¬¬äºŒå±¤æ˜¯æ°´å¹³èµ°å‘
-			double t = (min_XRange - (XRange[1] - XRange[0])) / 2;		//åªæœ‰xèƒ½å»¶é•· (yå»¶é•·çš„è©±å°±æœƒç¢°ä¸åˆ°ç¬¬ä¸€å±¤çš„pin (é–‹è·¯)
+		else {				//²Ä¤@¼h¬O««ª½¨«¦V¡A²Ä¤G¼h¬O¤ô¥­¨«¦V
+			double t = (min_XRange - (XRange[1] - XRange[0])) / 2;		//¥u¦³x¯à©µªø (y©µªøªº¸Ü´N·|¸I¤£¨ì²Ä¤@¼hªºpin (¶}¸ô)
 			XRange[0] -= t;
 			XRange[1] += t;
 		}
 	}
-	else {      //ç¬¬äºŒå±¤ä»¥ä¸Š
-		if (XRange[1] - XRange[0] < min_XRange) {                                    //ç¬¬ä¸€å±¤ ç›®æ¨™pinä¸Š å¯èƒ½æœƒå¤ªçŸ­-->è®Šé•·
+	else {      //²Ä¤G¼h¥H¤W
+		if (XRange[1] - XRange[0] < min_XRange) {                                    //²Ä¤@¼h ¥Ø¼Ğpin¤W ¥i¯à·|¤Óµu-->ÅÜªø
 			double t = (min_XRange - (XRange[1] - XRange[0])) / 2;
 			XRange[0] -= t;
 			XRange[1] += t;
 		}
 
-		if (YRange[1] - YRange[0] < min_YRange) {						//ç¬¬ä¸€å±¤ ç›®æ¨™pinä¸Š å¯èƒ½æœƒå¤ªçŸ­-->è®Šé•·
+		if (YRange[1] - YRange[0] < min_YRange) {						//²Ä¤@¼h ¥Ø¼Ğpin¤W ¥i¯à·|¤Óµu-->ÅÜªø
 			double t = (min_YRange - (YRange[1] - YRange[0])) / 2;
 			YRange[0] -= t;
 			YRange[1] += t;
 		}
 	}
 
-	double w= _wire_width; //ç·šå¯¬
+	double w= _wire_width; //½u¼e
 	double _first_VP_Y_0 = 0, _first_VP_Y_1 = 0;
 	double _first_VP_X_0 = 0, _first_VP_X_1 = 0;
-	if (dir == 0) {				//dir == 'H'                //æ‰“æ–°çš„VP  å·¦ä¸‹å³ä¸Šé»
-		double x_buffer = 0.05/4; //xè¶…å‡ºå¤šå°‘?
-		double y_buffer = 0.05/4; //yç¸®é€²å»å¤šå°‘?
+	if (dir == 0) {				//dir == 'H'                //¥´·sªºVP  ¥ª¤U¥k¤WÂI
+		double x_buffer = 0.05/4; //x¶W¥X¦h¤Ö?
+		double y_buffer = 0.05/4; //yÁY¶i¥h¦h¤Ö?
 
 		VP_X[0]=XRange[0] - x_buffer;                          // VP1's X
 		VP_X[1] =XRange[1] + x_buffer;
@@ -443,7 +444,7 @@ vector<RECT>design::BuildVP(int dir,  vector<RECT> &pre_vp, double _wire_width,i
 		ans.push_back(_temp_RECT);
 
 
-		VP_Y[0] = YRange[1] - y_buffer - w;                             // VP2's Y       (VP2å’ŒVP1çš„Xä¸€æ¨£)
+		VP_Y[0] = YRange[1] - y_buffer - w;                             // VP2's Y       (VP2©MVP1ªºX¤@¼Ë)
 		VP_Y[1] = YRange[1] - y_buffer;
 		_temp_RECT.Point(1, 'y') = VP_Y[0];
 		_temp_RECT.Point(2, 'y') = VP_Y[1];
@@ -459,8 +460,8 @@ vector<RECT>design::BuildVP(int dir,  vector<RECT> &pre_vp, double _wire_width,i
 
 	}
 	else if(dir==1) {			//dir=='V'
-		double x_buffer = 0.05/4; //xç¸®é€²å»å¤šå°‘?
-		double y_buffer = 0.05/4; //yè¶…å‡ºå¤šå°‘?
+		double x_buffer = 0.05/4; //xÁY¶i¥h¦h¤Ö?
+		double y_buffer = 0.05/4; //y¶W¥X¦h¤Ö?
 
 		VP_X[0] = XRange[0] + x_buffer;						// VP1's X
 		VP_X[1] = XRange[0] + x_buffer + w;
@@ -478,7 +479,7 @@ vector<RECT>design::BuildVP(int dir,  vector<RECT> &pre_vp, double _wire_width,i
 		_temp_RECT.Point(2, 'y') = VP_Y[1];
 		ans.push_back(_temp_RECT);
 
-		VP_X[0] = XRange[1] - x_buffer - w;					// VP2's X    (VP2å’ŒVP1çš„Yä¸€æ¨£)
+		VP_X[0] = XRange[1] - x_buffer - w;					// VP2's X    (VP2©MVP1ªºY¤@¼Ë)
 		VP_X[1] = XRange[1] - x_buffer;
 
 		_temp_RECT.Point(1, 'x') = VP_X[0];
@@ -502,6 +503,7 @@ vector<RECT>design::BuildVP(int dir,  vector<RECT> &pre_vp, double _wire_width,i
 
 void design::insert_VP_straight_initial(string which_cell_type)
 {
+
 	pin* _out_pin;
 	_out_pin = NULL;
 	int _which_pin = -1;
@@ -521,26 +523,25 @@ void design::insert_VP_straight_initial(string which_cell_type)
 	double _suitable_height = 0;
 	if (_out_pin != NULL) {
 		for (int i = 0; i < _out_pin->Get_rect().size(); ++i) {
-			if (_all_layer[_out_pin->getlayer().at(0)]->get_direction() == 0) {     //pinåœ¨çš„é‚£å€‹metal (1or2) æ˜¯ç¹horizontal
-				/*if (abs(_out_pin->get_RECT().at(i).first.first - _out_pin->get_RECT().at(i).second.first) > abs(_out_pin->get_RECT().at(i).first.second - _out_pin->get_RECT().at(i).second.second)) {   //x2-x2 > y1-y2    //æ˜¯ä¸€å€‹æ°´å¹³å½¢ç‹€çš„pin
-					if (abs(_out_pin->get_RECT().at(i).first.first - _out_pin->get_RECT().at(i).second.first) > 0.4) {              //è®Š> é•·çš„1/3
+			if (_all_layer[_out_pin->getlayer().at(0)]->get_direction() == 0) {     //pin¦bªº¨º­Ómetal (1or2) ¬OÂ¶horizontal
+				/*if (abs(_out_pin->get_RECT().at(i).first.first - _out_pin->get_RECT().at(i).second.first) > abs(_out_pin->get_RECT().at(i).first.second - _out_pin->get_RECT().at(i).second.second)) {   //x2-x2 > y1-y2    //¬O¤@­Ó¤ô¥­§Îª¬ªºpin
+					if (abs(_out_pin->get_RECT().at(i).first.first - _out_pin->get_RECT().at(i).second.first) > 0.4) {              //ÅÜ> ªøªº1/3
 						_which_pin = i;
-						base_dir = 0;         //æ­¤pinçš„ä¸€å€‹_which_pinç·šæ®µæ˜¯æ°´å¹³èµ°å‘
+						base_dir = 0;         //¦¹pinªº¤@­Ó_which_pin½u¬q¬O¤ô¥­¨«¦V
 						cout << "There is a horizontal dir on metal 1 " << endl;
 						cout << "flag=1   !!!!!!!!!!!" << endl;
 						flag = 1;
 						break;
 					}
 				}					*/
-
 				flag = 0;
 
 			}
-			else {									//pinåœ¨çš„é‚£å€‹metal (1or2) æ˜¯ç¹vertical
-				if (abs(_out_pin->Get_rect().at(i).Point(1,'y') - _out_pin->Get_rect().at(i).Point(2,'y')) > abs(_out_pin->Get_rect().at(i).Point(1,'x') - _out_pin->Get_rect().at(i).Point(2,'x'))) {   // y1-y2 > x2-x2   //æ˜¯ä¸€å€‹å‚ç›´ç·šå½¢ç‹€çš„pin
+			else {									//pin¦bªº¨º­Ómetal (1or2) ¬OÂ¶vertical
+				if (abs(_out_pin->Get_rect().at(i).Point(1,'y') - _out_pin->Get_rect().at(i).Point(2,'y')) > abs(_out_pin->Get_rect().at(i).Point(1,'x') - _out_pin->Get_rect().at(i).Point(2,'x'))) {   // y1-y2 > x2-x2   //¬O¤@­Ó««ª½½u§Îª¬ªºpin
 					if (abs(_out_pin->Get_rect().at(i).Point(1, 'y') - _out_pin->Get_rect().at(i).Point(2, 'y')) > 0.4) {
 						_which_pin = i;
-						base_dir = 1;         //æ­¤pinçš„ä¸€å€‹_which_pinç·šæ®µæ˜¯å‚ç›´èµ°å‘
+						base_dir = 1;         //¦¹pinªº¤@­Ó_which_pin½u¬q¬O««ª½¨«¦V
 						cout << "There is a vertical dir on metal 1 " << endl;
 						cout << "flag=1   !!!!!!!!!!!" << endl;
 						cout << "_which_pin : " << _which_pin << endl;
@@ -552,6 +553,9 @@ void design::insert_VP_straight_initial(string which_cell_type)
 			}
 		}
 
+	/*	flag = 0;
+		base_dir = 0;*/
+
 		vector<RECT> pre_vp;
 		vector<RECT> now_vp;
 		RECT _temp_rect;
@@ -561,7 +565,7 @@ void design::insert_VP_straight_initial(string which_cell_type)
 
 		auto iter = _all_layer.find(_out_pin->getlayer().at(0));			//metal1					////////////////////////////////////////////////////////////////////
 
-		if (flag == 0) {					//æ²’æœ‰åŒæ–¹å‘çš„output pin: æ‰¾ä¸€å€‹ç›´çš„, æœ€é•·çš„output pin ( metal1 is horizontal)
+		if (flag == 0) {					//¨S¦³¦P¤è¦Vªºoutput pin: §ä¤@­Óª½ªº, ³Ìªøªºoutput pin ( metal1 is horizontal)
 			base_dir = iter->second->get_direction();							//( metal1 is horizontal)
 			if (base_dir == 0){
 				for (int j = 0; j < _out_pin->Get_rect_size(); ++j) {
@@ -573,17 +577,17 @@ void design::insert_VP_straight_initial(string which_cell_type)
 					}
 				}
 
-			//å¾€å³æˆ–å¾€å·¦ä¸€æ­¥ å†æ‰“ä¸€æ¢ç›´çš„ (metal 2)
+			//©¹¥k©Î©¹¥ª¤@¨B ¦A¥´¤@±øª½ªº (metal 2)
 			pre_vp.clear();
-			pre_vp.push_back(_out_pin->Get_rect().at(_which_pin));                     //metal2 ç¬¬ä¸€æ ¹
-			/*if (_out_pin->get_RECT().at(_which_pin).first.first + _spacing > _all_cell_type_new[which_cell_type]->get_size()) {			//å¾€å·¦ä¸€æ­¥
+			pre_vp.push_back(_out_pin->Get_rect().at(_which_pin));                     //metal2 ²Ä¤@®Ú
+			/*if (_out_pin->get_RECT().at(_which_pin).first.first + _spacing > _all_cell_type_new[which_cell_type]->get_size()) {			//©¹¥ª¤@¨B
 				_temp_rect.first.first = _out_pin->get_RECT().at(_which_pin).first.first - _spacing;
 				_temp_rect.first.second = _out_pin->get_RECT().at(_which_pin).first.second;
 				_temp_rect.second.first = _out_pin->get_RECT().at(_which_pin).second.first - _spacing;
 				_temp_rect.second.second = _out_pin->get_RECT().at(_which_pin).second.second;
 			}
 			else {
-				_temp_rect.first.first = _out_pin->get_RECT().at(_which_pin).first.first + _spacing;                                       //å¾€å³ä¸€æ­¥   (å¤§éƒ¨åˆ†éƒ½é•·é€™æ¨£)
+				_temp_rect.first.first = _out_pin->get_RECT().at(_which_pin).first.first + _spacing;                                       //©¹¥k¤@¨B   (¤j³¡¤À³£ªø³o¼Ë)
 				_temp_rect.first.second = _out_pin->get_RECT().at(_which_pin).first.second;
 				_temp_rect.second.first = _out_pin->get_RECT().at(_which_pin).second.first + _spacing;
 				_temp_rect.second.second = _out_pin->get_RECT().at(_which_pin).second.second;
@@ -591,14 +595,14 @@ void design::insert_VP_straight_initial(string which_cell_type)
 
 			cout << "this_cell_type's width : " << _all_cell_type_new[which_cell_type]->get_size() << endl;
 
-			if (_out_pin->Get_rect().at(_which_pin).Point(1, 'x') - _spacing < (0+0.15)) {			//å¾€å³ä¸€æ­¥
+			if (_out_pin->Get_rect().at(_which_pin).Point(1, 'x') - _spacing < (0+0.15)) {			//©¹¥k¤@¨B
 				_temp_rect.Point(1, 'x') = _out_pin->Get_rect().at(_which_pin).Point(1, 'x') +_spacing;
 				_temp_rect.Point(1, 'y') = _out_pin->Get_rect().at(_which_pin).Point(1, 'y');
 				_temp_rect.Point(2, 'x') = _out_pin->Get_rect().at(_which_pin).Point(2, 'x') + _spacing;
 				_temp_rect.Point(2, 'y') = _out_pin->Get_rect().at(_which_pin).Point(2, 'y');
 			}
 			else {
-				_temp_rect.Point(1, 'x') = _out_pin->Get_rect().at(_which_pin).Point(1, 'x') - _spacing;                                       //å¾€å·¦ä¸€æ­¥  (å¤§éƒ¨åˆ†éƒ½é•·é€™æ¨£)
+				_temp_rect.Point(1, 'x') = _out_pin->Get_rect().at(_which_pin).Point(1, 'x') - _spacing;                                       //©¹¥ª¤@¨B  (¤j³¡¤À³£ªø³o¼Ë)
 				_temp_rect.Point(1, 'y') = _out_pin->Get_rect().at(_which_pin).Point(1, 'y');
 				_temp_rect.Point(2, 'x') = _out_pin->Get_rect().at(_which_pin).Point(2, 'x') - _spacing;
 				_temp_rect.Point(2, 'y') = _out_pin->Get_rect().at(_which_pin).Point(2, 'y');
@@ -606,24 +610,23 @@ void design::insert_VP_straight_initial(string which_cell_type)
 			
 
 
-			/* if (_out_pin->get_RECT().at(_which_pin).first.first - _spacing < (0 + 0.15)) {			//å¾€å³ä¸€æ­¥
+			/* if (_out_pin->get_RECT().at(_which_pin).first.first - _spacing < (0 + 0.15)) {			//©¹¥k¤@¨B
 				_temp_rect.first.first = _out_pin->get_RECT().at(_which_pin).first.first - _spacing;
 				_temp_rect.first.second = _out_pin->get_RECT().at(_which_pin).first.second;
 				_temp_rect.second.first = _out_pin->get_RECT().at(_which_pin).second.first - _spacing;
 				_temp_rect.second.second = _out_pin->get_RECT().at(_which_pin).second.second;
 			}
 			else {
-				_temp_rect.first.first = _out_pin->get_RECT().at(_which_pin).first.first + _spacing;                                       //å¾€å·¦ä¸€æ­¥  (å¤§éƒ¨åˆ†éƒ½é•·é€™æ¨£)
+				_temp_rect.first.first = _out_pin->get_RECT().at(_which_pin).first.first + _spacing;                                       //©¹¥ª¤@¨B  (¤j³¡¤À³£ªø³o¼Ë)
 				_temp_rect.first.second = _out_pin->get_RECT().at(_which_pin).first.second;
 				_temp_rect.second.first = _out_pin->get_RECT().at(_which_pin).second.first + _spacing;
 				_temp_rect.second.second = _out_pin->get_RECT().at(_which_pin).second.second;
 			}*/
 
-				pre_vp.push_back(_temp_rect);       //metal2 ç¬¬äºŒæ ¹
+				pre_vp.push_back(_temp_rect);       //metal2 ²Ä¤G®Ú
 		}
 
-			else if (base_dir == 1) {                ////////////////æ¯”è¼ƒå°‘ç”¨ï¼Œç›¡é‡ä¸è¦ç”¨
-
+			else if (base_dir == 1) {                ////////////////¤ñ¸û¤Ö¥Î¡AºÉ¶q¤£­n¥Î
 				for (int j = 0; j < _out_pin->Get_rect_size(); ++j) {
 					if (abs(_out_pin->Get_rect().at(j).Point(1, 'x') - _out_pin->Get_rect().at(j).Point(2, 'x')) > _max_height) {
 						_max_height = abs(_out_pin->Get_rect().at(j).Point(1, 'x') - _out_pin->Get_rect().at(j).Point(2, 'x'));
@@ -634,18 +637,18 @@ void design::insert_VP_straight_initial(string which_cell_type)
 				}
 
 
-				//å¾€ä¸‹ä¸€æ­¥ å†æ‰“ä¸€æ¢æ©«çš„ (metal 2)
+				//©¹¤U¤@¨B ¦A¥´¤@±ø¾îªº (metal 2)
 				pre_vp.clear();
-				pre_vp.push_back(_out_pin->Get_rect().at(_which_pin));                     //metal2 ç¬¬ä¸€æ ¹
+				pre_vp.push_back(_out_pin->Get_rect().at(_which_pin));                     //metal2 ²Ä¤@®Ú
 				_temp_rect.Point(1, 'x') = _out_pin->Get_rect().at(_which_pin).Point(1, 'x');
 				_temp_rect.Point(1, 'y') = _out_pin->Get_rect().at(_which_pin).Point(1, 'y') + _spacing;
 				_temp_rect.Point(2, 'x') = _out_pin->Get_rect().at(_which_pin).Point(2, 'x');
 				_temp_rect.Point(2, 'y') = _out_pin->Get_rect().at(_which_pin).Point(2, 'y') +_spacing;
-				pre_vp.push_back(_temp_rect);       //metal2 ç¬¬äºŒæ ¹
+				pre_vp.push_back(_temp_rect);       //metal2 ²Ä¤G®Ú
 
-			}						  ////////////////æ¯”è¼ƒå°‘ç”¨ï¼Œç›¡é‡ä¸è¦ç”¨
+			}						  ////////////////¤ñ¸û¤Ö¥Î¡AºÉ¶q¤£­n¥Î
 
-			for (int i = 0; i < _out_pin->Get_rect_size(); ++i) {				//_out_pinçš„_RECTå…¨éƒ¨çµ¦_obs
+			for (int i = 0; i < _out_pin->Get_rect_size(); ++i) {				//_out_pinªº_RECT¥ş³¡µ¹_obs
 				_out_pin->_obs.push_back(_out_pin->Get_rect().at(i));
 				_out_pin->_obs_layer.push_back(_out_pin->getlayer().at(i));
 			}
@@ -654,45 +657,45 @@ void design::insert_VP_straight_initial(string which_cell_type)
 			auto iter = _all_layer.find(_out_pin->getlayer().at(0));			//metal1
 			_out_pin->_clear_layer();
 			iter++;			//metal2
-			each_dir = (base_dir == 1) ? 0 : 1;				//ä¸‹ä¸€å±¤èµ°å‘æ›´æ–° (metal2)
+			each_dir = (base_dir == 1) ? 0 : 1;				//¤U¤@¼h¨«¦V§ó·s (metal2)
 
-			if (each_dir == 1) {                    //å¦‚æœmetal2æ˜¯vertical directionçš„é€™ç¨®case
+			if (each_dir == 1) {                    //¦pªGmetal2¬Overtical directionªº³oºØcase
 				cout << "pre_vp.at(0) : " << pre_vp.at(0).Point(1, 'y') << "   " << pre_vp.at(0).Point(2, 'y') << "    " << pre_vp.at(1).Point(1, 'y') << "      " << pre_vp.at(1).Point(2, 'y') << endl;
 				//offset(pre_vp, iter->second->get_spacing() + 0.1, 0.15, 1.05);
 				cout << "pre_vp.at(0) : " << pre_vp.at(0).Point(1, 'y') << "   " << pre_vp.at(0).Point(2, 'y') << "    " << pre_vp.at(1).Point(1, 'y') << "      " << pre_vp.at(1).Point(2, 'y') << endl;
 			}
 
 			_out_pin->_obs.insert(_out_pin->_obs.end(), pre_vp.begin(), pre_vp.end());
-			_out_pin->_obs_layer.push_back(iter->first);       // å…©æ ¹æ–°åŠ å…¥çš„obsæ‰€åœ¨çš„metal layer
-			_out_pin->_obs_layer.push_back(iter->first);       // å…©æ ¹æ–°åŠ å…¥çš„obsæ‰€åœ¨çš„metal layer
+			_out_pin->_obs_layer.push_back(iter->first);       // ¨â®Ú·s¥[¤Jªºobs©Ò¦bªºmetal layer
+			_out_pin->_obs_layer.push_back(iter->first);       // ¨â®Ú·s¥[¤Jªºobs©Ò¦bªºmetal layer
 
 			iter++;			//metal3
-			each_dir = (each_dir == 1) ? 0 : 1;				//ä¸‹ä¸€å±¤èµ°å‘æ›´æ–° (metal3)
+			each_dir = (each_dir == 1) ? 0 : 1;				//¤U¤@¼h¨«¦V§ó·s (metal3)
 
 
-			now_vp = BuildVP(each_dir, pre_vp, iter->second->get_width(),3);    //metal3 ç‰¹åˆ¥è™•ç†
+			now_vp = BuildVP(each_dir, pre_vp, iter->second->get_width(),3);    //metal3 ¯S§O³B²z
 			_out_pin->_obs.insert(_out_pin->_obs.end(), now_vp.begin(), now_vp.end());
-			_out_pin->_obs_layer.push_back(iter->first);       // ä¸‰æ ¹æ–°åŠ å…¥çš„obsæ‰€åœ¨çš„metal layer
-			_out_pin->_obs_layer.push_back(iter->first);       // ä¸‰æ ¹æ–°åŠ å…¥çš„obsæ‰€åœ¨çš„metal layer
-			_out_pin->_obs_layer.push_back(iter->first);       // ä¸‰æ ¹æ–°åŠ å…¥çš„obsæ‰€åœ¨çš„metal layer
+			_out_pin->_obs_layer.push_back(iter->first);       // ¤T®Ú·s¥[¤Jªºobs©Ò¦bªºmetal layer
+			_out_pin->_obs_layer.push_back(iter->first);       // ¤T®Ú·s¥[¤Jªºobs©Ò¦bªºmetal layer
+			_out_pin->_obs_layer.push_back(iter->first);       // ¤T®Ú·s¥[¤Jªºobs©Ò¦bªºmetal layer
 			pre_vp.clear();
 			pre_vp = now_vp;
 			now_vp.clear();
-			each_dir = (each_dir == 1) ? 0 : 1;		//ä¸‹ä¸€å±¤èµ°å‘æ›´æ–°
+			each_dir = (each_dir == 1) ? 0 : 1;		//¤U¤@¼h¨«¦V§ó·s
 			iter++;			//metal4
 
-			for (; iter != --(--_all_layer.end()); iter++) {            //ç¬¬"å››"å±¤~å€’æ•¸ç¬¬ä¸‰å±¤
+			for (; iter != --(--_all_layer.end()); iter++) {            //²Ä"¥|"¼h~­Ë¼Æ²Ä¤T¼h
 				now_vp = BuildVP(each_dir, pre_vp, iter->second->get_width(),2);
 				_out_pin->_obs.insert(_out_pin->_obs.end(), now_vp.begin(), now_vp.end());
-				_out_pin->_obs_layer.push_back(iter->first);       // å…©æ ¹æ–°åŠ å…¥çš„obsæ‰€åœ¨çš„metal layer
-				_out_pin->_obs_layer.push_back(iter->first);       // å…©æ ¹æ–°åŠ å…¥çš„obsæ‰€åœ¨çš„metal layer
+				_out_pin->_obs_layer.push_back(iter->first);       // ¨â®Ú·s¥[¤Jªºobs©Ò¦bªºmetal layer
+				_out_pin->_obs_layer.push_back(iter->first);       // ¨â®Ú·s¥[¤Jªºobs©Ò¦bªºmetal layer
 				pre_vp.clear();
 				pre_vp = now_vp;
 				now_vp.clear();
-				each_dir = (each_dir == 1) ? 0 : 1;		//ä¸‹ä¸€å±¤èµ°å‘æ›´æ–°
+				each_dir = (each_dir == 1) ? 0 : 1;		//¤U¤@¼h¨«¦V§ó·s
 			}
 			//now_VP+= _all_cell_type_new[which_cell_type]->_this_type_all_cell.size();
-			now_vp = BuildVP(each_dir, pre_vp, iter->second->get_width(),2);		//æœ€å¾Œä¸€æ ¹ : å€’æ•¸ç¬¬äºŒå±¤
+			now_vp = BuildVP(each_dir, pre_vp, iter->second->get_width(),2);		//³Ì«á¤@®Ú : ­Ë¼Æ²Ä¤G¼h
 			_out_pin->Set_rect(now_vp.at(0));
 			_out_pin->setlayer(iter->first);
 
@@ -700,93 +703,93 @@ void design::insert_VP_straight_initial(string which_cell_type)
 
 
 
-		else if (flag == 1) {						//æœ‰å’Œmetal1åŒæ–¹å‘çš„output pin
-			for (int i = 0; i < _out_pin->Get_rect_size(); ++i) {				//_out_pinçš„_RECTå…¨éƒ¨çµ¦_obs
+		else if (flag == 1) {						//¦³©Mmetal1¦P¤è¦Vªºoutput pin
+			for (int i = 0; i < _out_pin->Get_rect_size(); ++i) {				//_out_pinªº_RECT¥ş³¡µ¹_obs
 				_out_pin->_obs.push_back(_out_pin->Get_rect().at(i));
 				_out_pin->_obs_layer.push_back(_out_pin->getlayer().at(i));
 			}
 			_out_pin->Clear_rect();
 
-			//å·²çŸ¥é“è¦åœ¨ç¬¬_which_pinå€‹pinä¸Šæ‰“ä¸Šé¢é‚£æ›¾layerçš„VP				
+			//¤wª¾¹D­n¦b²Ä_which_pin­Ópin¤W¥´¤W­±¨º´¿layerªºVP				
 			auto iter = _all_layer.find(_out_pin->getlayer().at(0));
 			_out_pin->_clear_layer();
 			iter++;
 
 			vector<RECT> pre_vp;
 			vector<RECT> now_vp;
-			each_dir = (base_dir == 1) ? 0 : 1;				//ä¸‹ä¸€å±¤èµ°å‘æ›´æ–°
+			each_dir = (base_dir == 1) ? 0 : 1;				//¤U¤@¼h¨«¦V§ó·s
 			pre_vp.clear();
-			pre_vp.push_back(_out_pin->_obs.at(_which_pin));      //ç¬¬ä¸€æ ¹
+			pre_vp.push_back(_out_pin->_obs.at(_which_pin));      //²Ä¤@®Ú
 
-			now_vp = BuildVP(each_dir, pre_vp, iter->second->get_width(),2);				// metal2 ç‰¹åˆ¥è™•ç†
-			//ç‚ºé˜²æ­¢é€™å…©æ ¹ç›´çš„(æˆ–è¡¡çš„ ä½†è¼ƒå°‘è¦‹) VPåœ¨metal2æœƒå’ŒVSS VDDçŸ­è·¯
-			if (each_dir == 1) {                    //å¦‚æœmetal2æ˜¯vertical directionçš„é€™ç¨®case
+			now_vp = BuildVP(each_dir, pre_vp, iter->second->get_width(),2);				// metal2 ¯S§O³B²z
+			//¬°¨¾¤î³o¨â®Úª½ªº(©Î¿Åªº ¦ı¸û¤Ö¨£) VP¦bmetal2·|©MVSS VDDµu¸ô
+			if (each_dir == 1) {                    //¦pªGmetal2¬Overtical directionªº³oºØcase
 				cout << "now_vp.at(0) : " << now_vp.at(0).Point(1,'y') << "   " << now_vp.at(0).Point(2,'y') << "    " << now_vp.at(1).Point(1, 'y') << "      " << now_vp.at(1).Point(2, 'y') << endl;
 				//offset(now_vp, iter->second->get_spacing() + 0.1, 0.15, 1.05);
 			}
 
 			cout << "now_vp.at(0) : " << now_vp.at(0).Point(1, 'y') << "   " << now_vp.at(0).Point(2, 'y') << "    " << now_vp.at(1).Point(1, 'y') << "      " << now_vp.at(1).Point(2, 'y') << endl;
 			_out_pin->_obs.insert(_out_pin->_obs.end(), now_vp.begin(), now_vp.end());
-			_out_pin->_obs_layer.push_back(iter->first);       // å…©æ ¹æ–°åŠ å…¥çš„obsæ‰€åœ¨çš„metal layer
-			_out_pin->_obs_layer.push_back(iter->first);       // å…©æ ¹æ–°åŠ å…¥çš„obsæ‰€åœ¨çš„metal layer
+			_out_pin->_obs_layer.push_back(iter->first);       // ¨â®Ú·s¥[¤Jªºobs©Ò¦bªºmetal layer
+			_out_pin->_obs_layer.push_back(iter->first);       // ¨â®Ú·s¥[¤Jªºobs©Ò¦bªºmetal layer
 			pre_vp.clear();
 			pre_vp = now_vp;
 			now_vp.clear();
-			each_dir = (each_dir == 1) ? 0 : 1;		//ä¸‹ä¸€å±¤èµ°å‘æ›´æ–° (metal3)
+			each_dir = (each_dir == 1) ? 0 : 1;		//¤U¤@¼h¨«¦V§ó·s (metal3)
 			iter++;                   //metal3
 
-			now_vp = BuildVP(each_dir, pre_vp, iter->second->get_width(), 3);				// metal3 ç‰¹åˆ¥è™•ç†
+			now_vp = BuildVP(each_dir, pre_vp, iter->second->get_width(), 3);				// metal3 ¯S§O³B²z
 			_out_pin->_obs.insert(_out_pin->_obs.end(), now_vp.begin(), now_vp.end());
-			_out_pin->_obs_layer.push_back(iter->first);       // ä¸‰æ ¹æ–°åŠ å…¥çš„obsæ‰€åœ¨çš„metal layer
-			_out_pin->_obs_layer.push_back(iter->first);       // ä¸‰æ ¹æ–°åŠ å…¥çš„obsæ‰€åœ¨çš„metal layer
-			_out_pin->_obs_layer.push_back(iter->first);       // ä¸‰æ ¹æ–°åŠ å…¥çš„obsæ‰€åœ¨çš„metal layer
+			_out_pin->_obs_layer.push_back(iter->first);       // ¤T®Ú·s¥[¤Jªºobs©Ò¦bªºmetal layer
+			_out_pin->_obs_layer.push_back(iter->first);       // ¤T®Ú·s¥[¤Jªºobs©Ò¦bªºmetal layer
+			_out_pin->_obs_layer.push_back(iter->first);       // ¤T®Ú·s¥[¤Jªºobs©Ò¦bªºmetal layer
 			pre_vp.clear();
 			pre_vp = now_vp;
 			now_vp.clear();
-			each_dir = (each_dir == 1) ? 0 : 1;		//ä¸‹ä¸€å±¤èµ°å‘æ›´æ–° (metal4)
+			each_dir = (each_dir == 1) ? 0 : 1;		//¤U¤@¼h¨«¦V§ó·s (metal4)
 			iter++;                   //metal4
 
-			now_vp = BuildVP(each_dir, pre_vp, iter->second->get_width(), 2);				//metal4ç‰¹åˆ¥è™•ç†
-			if (each_dir == 1) {                    //å¦‚æœmetal4æ˜¯vertical directionçš„é€™ç¨®case
+			now_vp = BuildVP(each_dir, pre_vp, iter->second->get_width(), 2);				//metal4¯S§O³B²z
+			if (each_dir == 1) {                    //¦pªGmetal4¬Overtical directionªº³oºØcase
 				cout << "now_vp.at(0) metal4: " << now_vp.at(0).Point(1, 'y') << "   " << now_vp.at(0).Point(2, 'y') << "    " << now_vp.at(1).Point(1, 'y') << "      " << now_vp.at(1).Point(2, 'y') << endl;
 				//offset(now_vp, iter->second->get_spacing()+0.1, 0.06, 1.14);
 				
 			}
 			cout << "now_vp.at(0) metal4: " << now_vp.at(0).Point(1, 'y') << "   " << now_vp.at(0).Point(2, 'y') << "    " << now_vp.at(1).Point(1, 'y') << "      " << now_vp.at(1).Point(2, 'y') << endl;
 			_out_pin->_obs.insert(_out_pin->_obs.end(), now_vp.begin(), now_vp.end());
-			_out_pin->_obs_layer.push_back(iter->first);       // å…©æ ¹æ–°åŠ å…¥çš„obsæ‰€åœ¨çš„metal layer
-			_out_pin->_obs_layer.push_back(iter->first);       // å…©æ ¹æ–°åŠ å…¥çš„obsæ‰€åœ¨çš„metal layer
+			_out_pin->_obs_layer.push_back(iter->first);       // ¨â®Ú·s¥[¤Jªºobs©Ò¦bªºmetal layer
+			_out_pin->_obs_layer.push_back(iter->first);       // ¨â®Ú·s¥[¤Jªºobs©Ò¦bªºmetal layer
 			pre_vp.clear();
 			pre_vp = now_vp;
 			now_vp.clear();
-			each_dir = (each_dir == 1) ? 0 : 1;		//ä¸‹ä¸€å±¤èµ°å‘æ›´æ–°  (metal5)
+			each_dir = (each_dir == 1) ? 0 : 1;		//¤U¤@¼h¨«¦V§ó·s  (metal5)
 			iter++;                   //metal5
 
-			for (; iter != --(--_all_layer.end()); iter++) {            //ç¬¬äº”å±¤~å€’æ•¸ç¬¬ä¸‰å±¤
+			for (; iter != --(--_all_layer.end()); iter++) {            //²Ä¤­¼h~­Ë¼Æ²Ä¤T¼h
 				now_vp = BuildVP(each_dir, pre_vp,iter->second->get_width(),2);
 				_out_pin->_obs.insert(_out_pin->_obs.end(), now_vp.begin(), now_vp.end());
-				_out_pin->_obs_layer.push_back(iter->first);       // å…©æ ¹æ–°åŠ å…¥çš„obsæ‰€åœ¨çš„metal layer
-				_out_pin->_obs_layer.push_back(iter->first);       // å…©æ ¹æ–°åŠ å…¥çš„obsæ‰€åœ¨çš„metal layer
+				_out_pin->_obs_layer.push_back(iter->first);       // ¨â®Ú·s¥[¤Jªºobs©Ò¦bªºmetal layer
+				_out_pin->_obs_layer.push_back(iter->first);       // ¨â®Ú·s¥[¤Jªºobs©Ò¦bªºmetal layer
 				pre_vp.clear();
 				pre_vp = now_vp;
 				now_vp.clear();
-				each_dir = (each_dir == 1) ? 0 : 1;		//ä¸‹ä¸€å±¤èµ°å‘æ›´æ–°
+				each_dir = (each_dir == 1) ? 0 : 1;		//¤U¤@¼h¨«¦V§ó·s
 			}
 			//now_VP+= _all_cell_type_new[which_cell_type]->_this_type_all_cell.size();
-			now_vp = BuildVP(each_dir, pre_vp, iter->second->get_width(),2);		//æœ€å¾Œä¸€æ ¹ : å€’æ•¸ç¬¬äºŒå±¤
+			now_vp = BuildVP(each_dir, pre_vp, iter->second->get_width(),2);		//³Ì«á¤@®Ú : ­Ë¼Æ²Ä¤G¼h
 			_out_pin->Set_rect(now_vp.at(0));
 			_out_pin->setlayer(iter->first);
 
-			// æ­¤pinçš„obså€‘è®Šæˆä¸€å€‹æ–°çš„pin
+			// ¦¹pinªºobs­ÌÅÜ¦¨¤@­Ó·sªºpin
 			/*cout << "t" + to_string(_pins_of_obs.size()) << endl;
 			pin* _temp_pin = new pin("t"+ to_string(_pins_of_obs.size()), "INPUT", "SIGNAL");
 			for (int i = 0; i < _out_pin->_obs.size(); ++i) {				 
-				_temp_pin->set_RECT(_out_pin->_obs.at(i));					  // æ­¤pinçš„obså€‘çµ¦å»(ç•¶æˆ)æ–°çš„pinçš„RECT
-				_temp_pin->setlayer(_out_pin->_obs_layer.at(i));			  // æ­¤pinçš„obs layer çµ¦å»(ç•¶æˆ)æ–°çš„pinçš„layer
+				_temp_pin->set_RECT(_out_pin->_obs.at(i));					  // ¦¹pinªºobs­Ìµ¹¥h(·í¦¨)·sªºpinªºRECT
+				_temp_pin->setlayer(_out_pin->_obs_layer.at(i));			  // ¦¹pinªºobs layer µ¹¥h(·í¦¨)·sªºpinªºlayer
 			}
 			_pins_of_obs.insert({ "t" + to_string(_pins_of_obs.size()), _temp_pin });			*/
 
-			//å¯«ä¸€äº›æ±è¥¿åˆ°lefæª”
+			//¼g¤@¨ÇªF¦è¨ìlefÀÉ
 
 			/*cout << which_cell_type << endl;
 			cout << "_out_pin name : " << _out_pin->getname() << endl << endl;
@@ -800,7 +803,7 @@ void design::insert_VP_straight_initial(string which_cell_type)
 			pre_layer.clear();
 			now_layer.clear();
 			cout << "OBS" << endl;
-			for (int i = 0; i < _out_pin->_obs.size(); ++i) {					//_obs sizeæ‡‰è©²è¦ç­‰æ–¼_obs_layer size
+			for (int i = 0; i < _out_pin->_obs.size(); ++i) {					//_obs sizeÀ³¸Ó­nµ¥©ó_obs_layer size
 				now_layer = _out_pin->_obs_layer.at(i);
 				if (pre_layer != now_layer) {
 					cout << "LAYER " << _out_pin->_obs_layer.at(i) << " ;" << endl;
@@ -894,20 +897,26 @@ void design::insert_dodge_VP(double percent)
 	int now_insert_VP_num = 0;
 	target_VP_num = round(_components_num * percent);
 	cout << "target_VP_num: " << target_VP_num << endl;
+	cout << "_all_cell_type_new size: " << _all_cell_type_new.size() << endl;
 	for (const auto &s : _all_cell_type_new) {
 		if (now_insert_VP_num < target_VP_num) {
-			if (  (s.second->get_size() < 2) && (s.second->get_size() >0.9) ) {
-				s.second->_has_insert_VP = 1;                                     // é€™å€‹ç¨®é¡çš„cell type æ‰“äº†VP: _has_insert_VP=1
+			if (  (s.second->get_size() < 2) && (s.second->get_size() >0.9) && (s.second->find_outpin() != NULL)) {                     
+				cout << __LINE__ << endl;
+				s.second->_has_insert_VP = 1;                                     // ³o­ÓºØÃşªºcell type ¥´¤FVP: _has_insert_VP=1
 				for (int i = 0; i < s.second->_this_type_all_cell.size(); ++i) {
-					dodge_pin_VP(s.second,s.second->_this_type_all_cell.at(i));
+					cout << __LINE__ << endl;
+				      dodge_pin_VP(s.second->_this_type_all_cell.at(i));
+					cout << __LINE__ << endl;
 					s.second->_this_type_all_cell.at(i)->_new_cell_type_name = s.first + "_" + to_string(i);
-					s.second->_this_type_all_cell.at(i)->_VP_pin_name = "t"+find_outpin(s.second)->getname();
+					s.second->_this_type_all_cell.at(i)->_VP_pin_name = "t"+s.second->find_outpin()->getname();
 				}
-				cout << "ADD: " << s.second->_this_type_all_cell.size() << endl;
+				cout << "ADD: " <<s.first<<"    " <<s.second->_this_type_all_cell.size() << endl;
 				now_insert_VP_num += s.second->_this_type_all_cell.size();
 			}
 		}
-		else  break;
+		else {
+			break;
+		}
 	}
 	
 	cout << "final insert VP num: " << now_insert_VP_num << endl;
@@ -918,11 +927,11 @@ void design::insert_dodge_VP(double percent)
 
 
 ///
-void design::dodge_pin_VP(cell_type* which_cell_type, cell* which_cell)
+void design::dodge_pin_VP(cell* which_cell)
 {
-	pin* output_pin = find_outpin(which_cell_type);
-	RECT _base_pin_rect;
-	_base_pin_rect=choose_base_pin_rect(which_cell_type);
+	int _M2_dir = _all_layer["Metal2"]->get_direction();
+	cell_type* which_cell_type = which_cell->get_cell_type();             //this cell's celltype
+	pin* output_pin = which_cell_type->find_outpin();      // little bit redundant
 
 	double _x_coordinate = 0, _y_coordinate = 0;
 	_x_coordinate = which_cell->get_x() / _units;
@@ -930,113 +939,136 @@ void design::dodge_pin_VP(cell_type* which_cell_type, cell* which_cell)
 
 	vector<RECT> pre_vp;
 	vector<RECT> now_vp;
-	RECT _temp_rect, _base_pin_rect2;
+	RECT _base_pin_rect, _temp_rect, _base_pin_rect2;
+	pre_vp.clear(), now_vp.clear();
 
 	double _spacing = 0.5;
 	int base_dir = -1;
 	int each_dir = -1;
-	//auto iter = _all_layer.find(which_cell_type->_all_pin.at(0)->getlayer().at(0));			//metal1		
-	base_dir = 0;     //base_dir = iter->second->get_direction();							//( metal1 is horizontal)
-
-			//å¾€å³æˆ–å¾€å·¦ä¸€æ­¥ å†æ‰“ä¸€æ¢ç›´çš„ (metal 2)
-			pre_vp.clear();
-			////////////////////////////// check   oneMetal_VP_overlap
-			box b_2_1(point(_base_pin_rect.Point(1,'x')+ _x_coordinate, _base_pin_rect.Point(1, 'y') + _y_coordinate),
-				point(_base_pin_rect.Point(2, 'x') + _x_coordinate, _base_pin_rect.Point(2, 'y') + _y_coordinate));
-			if (oneMetal_VP_overlap("metal2", which_cell->get_cell_name(), output_pin->getname(), b_2_1) == false) {
-				pre_vp.push_back(_base_pin_rect);                     //metal2 ç¬¬ä¸€æ ¹
-			}
-			else {
-				pin* out_pin;
-				int k = -1;
-				out_pin = find_outpin(which_cell_type);
-				for (int i = 0; i < out_pin->Get_rect().size(); ++i) {
-					if ( !(out_pin->Get_rect().at(i)== _base_pin_rect) ) {
-						k = i;
-						_base_pin_rect2 = out_pin->Get_rect().at(i);
-						box b_2_1(point(_base_pin_rect2.Point(1, 'x') + _x_coordinate, _base_pin_rect2.Point(1, 'y') + _y_coordinate),
-							point(_base_pin_rect2.Point(2, 'x') + _x_coordinate, _base_pin_rect2.Point(2, 'y') + _y_coordinate));
-						////////////////// check   another Metal_VP_overlap
-						if (oneMetal_VP_overlap("metal2", which_cell->get_cell_name(), output_pin->getname(), b_2_1) == false) {
-							pre_vp.push_back(_base_pin_rect2);                     //metal2 ç¬¬ä¸€æ ¹
-							break;
-						}
-
+	base_dir = (_M2_dir == 1) ? 0 : 1;			//metal1 ¨«¦V (¥Îmetal2±À)
+	if (output_pin != NULL) {
+		//©¹¥k©Î©¹¥ª¤@¨B ¦A¥´¤@±øª½ªº (metal 2)
+		_base_pin_rect = choose_base_pin_rect(which_cell_type, _M2_dir);
+		if (_base_pin_rect._access_flag != -1) {
+		/*	box b_2_1(point(_base_pin_rect.Point(1, 'x') + _x_coordinate, _base_pin_rect.Point(1, 'y') + _y_coordinate),
+				point(_base_pin_rect.Point(2, 'x') + _x_coordinate, _base_pin_rect.Point(2, 'y') + _y_coordinate));*/
+			;
+		}
+		else {                    //output pin ¤¤¨S¦³_M2_dirªºRECT¤F 
+			_base_pin_rect = choose_base_pin_rect(which_cell_type, (_M2_dir == 1) ? 0 : 1);
+		}
+		////////////////////////////// check   oneMetal_VP_overlap
+		
+		box b_2_1(point(_base_pin_rect.Point(1, 'x') + _x_coordinate, _base_pin_rect.Point(1, 'y') + _y_coordinate),
+			point(_base_pin_rect.Point(2, 'x') + _x_coordinate, _base_pin_rect.Point(2, 'y') + _y_coordinate));
+		if (oneMetal_VP_overlap("Metal2", which_cell->get_cell_name(), output_pin->getname(), b_2_1) == false) {
+			pre_vp.push_back(_base_pin_rect);                     //metal2 ²Ä¤@®Ú
+		}
+		else {
+			pin* out_pin;
+			int k = -1;
+			out_pin = find_outpin(which_cell_type);
+			for (int i = 0; i < out_pin->Get_rect().size(); ++i) {
+				if (!(out_pin->Get_rect().at(i) == _base_pin_rect)) {
+					k = i;
+					_base_pin_rect2 = out_pin->Get_rect().at(i);
+					box b_2_1_1(point(_base_pin_rect2.Point(1, 'x') + _x_coordinate, _base_pin_rect2.Point(1, 'y') + _y_coordinate),
+						point(_base_pin_rect2.Point(2, 'x') + _x_coordinate, _base_pin_rect2.Point(2, 'y') + _y_coordinate));
+					////////////////// check   another Metal_VP_overlap
+					if (oneMetal_VP_overlap("Metal2", which_cell->get_cell_name(), output_pin->getname(), b_2_1_1) == false) {
+						pre_vp.push_back(_base_pin_rect2);                     //metal2 ²Ä¤@®Ú
+						break;
 					}
-					if (pre_vp.empty()) {                       /////æƒ³æƒ³è¦æ“ºæ­¤pinçš„å“ªå€‹recté€²ä¾†
-						_base_pin_rect2 = out_pin->Get_rect().at(k);                   ///////æ²’æœ‰è·‘  check  Metal_VP_overlap
-						pre_vp.push_back(_base_pin_rect2);
-					}
 
 				}
-			}
-
-			_base_pin_rect =pre_vp.at(0);
-			cout << "this_cell_type's width : " << which_cell_type->get_size() << endl;
-			if (_base_pin_rect.horizontal_or_straight() == 1) {            //metal2 ç¬¬ä¸€æ ¹æ˜¯ç›´çš„
-				if (_base_pin_rect.Point(1, 'x') - _spacing < (0 + 0.15)) {			//å¾€å³ä¸€æ­¥
-					_temp_rect.Point(1, 'x') = _base_pin_rect.Point(1, 'x') + _spacing;
-					_temp_rect.Point(1, 'y') = _base_pin_rect.Point(1, 'y');
-					_temp_rect.Point(2, 'x') = _base_pin_rect.Point(2, 'x') + _spacing;
-					_temp_rect.Point(2, 'y') = _base_pin_rect.Point(2, 'y');
-				}
-				else {
-					_temp_rect.Point(1, 'x') = _base_pin_rect.Point(1, 'x') - _spacing;                                       //å¾€å·¦ä¸€æ­¥  (å¤§éƒ¨åˆ†éƒ½é•·é€™æ¨£)
-					_temp_rect.Point(1, 'y') = _base_pin_rect.Point(1, 'y');
-					_temp_rect.Point(2, 'x') = _base_pin_rect.Point(2, 'x') - _spacing;
-					_temp_rect.Point(2, 'y') = _base_pin_rect.Point(2, 'y');
-				}
-			}
-			else {                   //metal2 ç¬¬ä¸€æ ¹æ˜¯æ†çš„
-				if (_base_pin_rect.Point(1, 'y') + _spacing > (which_cell_type->get_by() + 0.15)) {			//å¾€ä¸Šä¸€æ­¥  (æ‰“è¶…écell æœƒè“‹åˆ°åˆ¥äººçš„)
-					_temp_rect.Point(1, 'x') = _base_pin_rect.Point(1, 'x') ;
-					_temp_rect.Point(1, 'y') = _base_pin_rect.Point(1, 'y') + _spacing;
-					_temp_rect.Point(2, 'x') = _base_pin_rect.Point(2, 'x') ;
-					_temp_rect.Point(2, 'y') = _base_pin_rect.Point(2, 'y')+ _spacing;
-				}
-				else {
-					_temp_rect.Point(1, 'x') = _base_pin_rect.Point(1, 'x');                                       //å¾€ä¸‹ä¸€æ­¥ (ä¹Ÿæ˜¯æœƒè¶…éè‡ªå·±é€™å€‹cellè“‹åˆ°ä¸‹é¢cell pinçš„)
-					_temp_rect.Point(1, 'y') = _base_pin_rect.Point(1, 'y')- _spacing;
-					_temp_rect.Point(2, 'x') = _base_pin_rect.Point(2, 'x');
-					_temp_rect.Point(2, 'y') = _base_pin_rect.Point(2, 'y')- _spacing;
+				if (pre_vp.empty()) {                       /////·Q·Q­nÂ\¦¹pinªº­ş­Órect¶i¨Ó
+					_base_pin_rect2 = out_pin->Get_rect().at(k);                   ///////¨S¦³¶]  check  Metal_VP_overlap
+					pre_vp.push_back(_base_pin_rect2);
 				}
 
 			}
+		
+		}
 
-			/* if (_out_pin->get_RECT().at(_which_pin).first.first - _spacing < (0 + 0.15)) {			//å¾€å³ä¸€æ­¥
-				_temp_rect.first.first = _out_pin->get_RECT().at(_which_pin).first.first - _spacing;
-				_temp_rect.first.second = _out_pin->get_RECT().at(_which_pin).first.second;
-				_temp_rect.second.first = _out_pin->get_RECT().at(_which_pin).second.first - _spacing;
-				_temp_rect.second.second = _out_pin->get_RECT().at(_which_pin).second.second;
+		_base_pin_rect = pre_vp.at(0);
+		cout << "this_cell_type's width : " << which_cell_type->get_size() << endl;
+		int _left = -1;
+		if (_base_pin_rect.horizontal_or_straight() == 1) {            //metal2 ²Ä¤@®Ú¬Oª½ªº
+			if (_base_pin_rect.Point(1, 'x') - _spacing < (0 + 0.15)) {			//©¹¥k¤@¨B
+				_temp_rect.Point(1, 'x') = _base_pin_rect.Point(1, 'x') + _spacing;
+				_temp_rect.Point(1, 'y') = _base_pin_rect.Point(1, 'y');
+				_temp_rect.Point(2, 'x') = _base_pin_rect.Point(2, 'x') + _spacing;
+				_temp_rect.Point(2, 'y') = _base_pin_rect.Point(2, 'y');
+				_left = 0;
 			}
 			else {
-				_temp_rect.first.first = _out_pin->get_RECT().at(_which_pin).first.first + _spacing;                                       //å¾€å·¦ä¸€æ­¥  (å¤§éƒ¨åˆ†éƒ½é•·é€™æ¨£)
-				_temp_rect.first.second = _out_pin->get_RECT().at(_which_pin).first.second;
-				_temp_rect.second.first = _out_pin->get_RECT().at(_which_pin).second.first + _spacing;
-				_temp_rect.second.second = _out_pin->get_RECT().at(_which_pin).second.second;
-			}*/
-
-			////////////////////////////// check   oneMetal_VP_overlap
-			box b_2_2(point(_temp_rect.Point(1, 'x') + _x_coordinate, _temp_rect.Point(1, 'y') + _y_coordinate),
-				point(_temp_rect.Point(2, 'x') + _x_coordinate, _temp_rect.Point(2, 'y') + _y_coordinate));
-			if (oneMetal_VP_overlap("metal2", which_cell->get_cell_name(), output_pin->getname(), b_2_2) == false) {
-				pre_vp.push_back(_temp_rect);                     //metal2 ç¬¬äºŒæ ¹
+				_temp_rect.Point(1, 'x') = _base_pin_rect.Point(1, 'x') - _spacing;                                       //©¹¥ª¤@¨B  (¤j³¡¤À³£ªø³o¼Ë)
+				_temp_rect.Point(1, 'y') = _base_pin_rect.Point(1, 'y');
+				_temp_rect.Point(2, 'x') = _base_pin_rect.Point(2, 'x') - _spacing;
+				_temp_rect.Point(2, 'y') = _base_pin_rect.Point(2, 'y');
+				_left = 1;
 			}
-			else {
-				if (_temp_rect.horizontal_or_straight() == 1) {         //metal2æ‰“ä¸Šå»çš„é€™å…©æ ¹éƒ½æ˜¯ç›´çš„
-					_temp_rect.Point(1, 'x')+=0.13;
-					_temp_rect.Point(1, 'y') ;
-					_temp_rect.Point(2, 'x')+=0.13;
-					_temp_rect.Point(2, 'y') ;
-				}
-				else {													//metal2æ‰“ä¸Šå»çš„é€™å…©æ ¹éƒ½æ˜¯æ©«çš„
-					;
-				}
-				pre_vp.push_back(_temp_rect);                     //metal2 ç¬¬äºŒæ ¹
-			}
-		////////////////////////////æ¥è‘—metal3////////////////////////////
+		}
+		else {                   //metal2 ²Ä¤@®Ú¬O«íªº  (_base_pin_rect)  :  ¨C®Úª½ªºVP³£¬O¼e0.08ªø0.8¡A¨C¼hªº¨â®ÚVP¶¡®æ: >=0.5
+			
+				_temp_rect.Point(1, 'x') = _base_pin_rect.Point(1, 'x')+0.2;
+				_temp_rect.Point(1, 'y') = (_base_pin_rect.Point(1, 'y') + _base_pin_rect.Point(2, 'y'))/2  -0.4 ;
+				_temp_rect.Point(2, 'x') = _temp_rect.Point(1, 'x') + 0.08;
+				_temp_rect.Point(2, 'y') = (_base_pin_rect.Point(1, 'y') + _base_pin_rect.Point(2, 'y')) / 2 + 0.4;
 
-		//for (int i = 0; i < output_pin->Get_rect_size(); ++i) {				//_out_pinçš„_RECTå…¨éƒ¨çµ¦_obs
+				pre_vp.clear();
+				pre_vp.push_back(_temp_rect);
+
+				//metal2 ²Ä¤G®Ú
+				_temp_rect.Point(1, 'x') += 0.5;
+				_temp_rect.Point(1, 'y') ;
+				_temp_rect.Point(2, 'x') += 0.5;
+				_temp_rect.Point(2, 'y'); 
+
+		}
+
+		/* if (_out_pin->get_RECT().at(_which_pin).first.first - _spacing < (0 + 0.15)) {			//©¹¥k¤@¨B
+			_temp_rect.first.first = _out_pin->get_RECT().at(_which_pin).first.first - _spacing;
+			_temp_rect.first.second = _out_pin->get_RECT().at(_which_pin).first.second;
+			_temp_rect.second.first = _out_pin->get_RECT().at(_which_pin).second.first - _spacing;
+			_temp_rect.second.second = _out_pin->get_RECT().at(_which_pin).second.second;
+		}
+		else {
+			_temp_rect.first.first = _out_pin->get_RECT().at(_which_pin).first.first + _spacing;                                       //©¹¥ª¤@¨B  (¤j³¡¤À³£ªø³o¼Ë)
+			_temp_rect.first.second = _out_pin->get_RECT().at(_which_pin).first.second;
+			_temp_rect.second.first = _out_pin->get_RECT().at(_which_pin).second.first + _spacing;
+			_temp_rect.second.second = _out_pin->get_RECT().at(_which_pin).second.second;
+		}*/
+
+		////////////////////////////// check   oneMetal_VP_overlap
+		box b_2_2(point(_temp_rect.Point(1, 'x') + _x_coordinate, _temp_rect.Point(1, 'y') + _y_coordinate),
+			point(_temp_rect.Point(2, 'x') + _x_coordinate, _temp_rect.Point(2, 'y') + _y_coordinate));
+		if (oneMetal_VP_overlap("Metal2", which_cell->get_cell_name(), output_pin->getname(), b_2_2) == false) {
+			pre_vp.push_back(_temp_rect);                     //metal2 ²Ä¤G®Ú
+		}
+		else {
+			if (_temp_rect.horizontal_or_straight() == 1) {         //metal2¥´¤W¥hªº³o¨â®Ú³£¬Oª½ªº
+				if (_left == 1) {			//©¹¥ª¤@¨B
+					_temp_rect.Point(1, 'x') -= 0.13;
+					_temp_rect.Point(1, 'y');
+					_temp_rect.Point(2, 'x') -= 0.13;
+					_temp_rect.Point(2, 'y');
+				}
+				else if (_left == 0) {			//©¹¥k¤@¨B
+					_temp_rect.Point(1, 'x') += 0.13;
+					_temp_rect.Point(1, 'y');
+					_temp_rect.Point(2, 'x') += 0.13;
+					_temp_rect.Point(2, 'y');
+				}
+			}
+			else {													//metal2¥´¤W¥hªº³o¨â®Ú³£¬O¾îªº
+				;
+			}
+			pre_vp.push_back(_temp_rect);                     //metal2 ²Ä¤G®Ú
+		}
+		////////////////////////////±µµÛmetal3////////////////////////////
+
+		//for (int i = 0; i < output_pin->Get_rect_size(); ++i) {				//_out_pinªº_RECT¥ş³¡µ¹_obs
 		//	output_pin->_obs.push_back(output_pin->Get_rect().at(i));
 		//	output_pin->_obs_layer.push_back(output_pin->getlayer().at(i));
 		//}
@@ -1045,67 +1077,66 @@ void design::dodge_pin_VP(cell_type* which_cell_type, cell* which_cell)
 		auto iter = _all_layer.find(output_pin->getlayer().at(0));			//metal1
 		/*output_pin->_clear_layer();*/
 		iter++;			//metal2
-		each_dir = (base_dir == 1) ? 0 : 1;				//ä¸‹ä¸€å±¤èµ°å‘æ›´æ–° (metal2)
+		each_dir = (base_dir == 1) ? 0 : 1;				//¤U¤@¼h¨«¦V§ó·s (metal2)
 
 		//output_pin->_obs.insert(output_pin->_obs.end(), pre_vp.begin(), pre_vp.end());
-		//output_pin->_obs_layer.push_back(iter->first);       // å…©æ ¹æ–°åŠ å…¥çš„obsæ‰€åœ¨çš„metal layer
-		//output_pin->_obs_layer.push_back(iter->first);       // å…©æ ¹æ–°åŠ å…¥çš„obsæ‰€åœ¨çš„metal layer
+		//output_pin->_obs_layer.push_back(iter->first);       // ¨â®Ú·s¥[¤Jªºobs©Ò¦bªºmetal layer
+		//output_pin->_obs_layer.push_back(iter->first);       // ¨â®Ú·s¥[¤Jªºobs©Ò¦bªºmetal layer
 		which_cell->_VP.insert(which_cell->_VP.end(), pre_vp.begin(), pre_vp.end());
 		which_cell->_VP_layer.push_back(iter->first);
 		which_cell->_VP_layer.push_back(iter->first);
-			////////////////////////////æ¥è‘—metal3////////////////////////////
+		////////////////////////////±µµÛmetal3////////////////////////////
 		iter++;			//metal3
-		each_dir = (each_dir == 1) ? 0 : 1;				//ä¸‹ä¸€å±¤èµ°å‘æ›´æ–° (metal3)
+		each_dir = (each_dir == 1) ? 0 : 1;				//¤U¤@¼h¨«¦V§ó·s (metal3)
 
 
-		now_vp = BuildVP(each_dir, pre_vp, iter->second->get_width(), 3);    //metal3 ç‰¹åˆ¥è™•ç†
+		now_vp = BuildVP(each_dir, pre_vp, iter->second->get_width(), 3);    //metal3 ¯S§O³B²z
 		which_cell->_VP.insert(which_cell->_VP.end(), now_vp.begin(), now_vp.end());
-		which_cell->_VP_layer.push_back(iter->first);       // ä¸‰æ ¹æ–°åŠ å…¥çš„VPæ‰€åœ¨çš„metal layer
-		which_cell->_VP_layer.push_back(iter->first);       // ä¸‰æ ¹æ–°åŠ å…¥çš„VPæ‰€åœ¨çš„metal layer
-		which_cell->_VP_layer.push_back(iter->first);       // ä¸‰æ ¹æ–°åŠ å…¥çš„VPæ‰€åœ¨çš„metal layer
+		which_cell->_VP_layer.push_back(iter->first);       // ¤T®Ú·s¥[¤JªºVP©Ò¦bªºmetal layer
+		which_cell->_VP_layer.push_back(iter->first);       // ¤T®Ú·s¥[¤JªºVP©Ò¦bªºmetal layer
+		which_cell->_VP_layer.push_back(iter->first);       // ¤T®Ú·s¥[¤JªºVP©Ò¦bªºmetal layer
 		pre_vp.clear();
 		pre_vp = now_vp;
 		now_vp.clear();
-		each_dir = (each_dir == 1) ? 0 : 1;		//ä¸‹ä¸€å±¤èµ°å‘æ›´æ–°
+		each_dir = (each_dir == 1) ? 0 : 1;		//¤U¤@¼h¨«¦V§ó·s
 		iter++;			//metal4
 
-		for (; iter != --(--_all_layer.end()); iter++) {            //ç¬¬"å››"å±¤~å€’æ•¸ç¬¬ä¸‰å±¤
+		for (; iter != --(--_all_layer.end()); iter++) {            //²Ä"¥|"¼h~­Ë¼Æ²Ä¤T¼h
 			now_vp = BuildVP(each_dir, pre_vp, iter->second->get_width(), 2);
 			which_cell->_VP.insert(which_cell->_VP.end(), now_vp.begin(), now_vp.end());
-			which_cell->_VP_layer.push_back(iter->first);       // å…©æ ¹æ–°åŠ å…¥çš„VPæ‰€åœ¨çš„metal layer
-			which_cell->_VP_layer.push_back(iter->first);       // å…©æ ¹æ–°åŠ å…¥çš„VPæ‰€åœ¨çš„metal layer
+			which_cell->_VP_layer.push_back(iter->first);       // ¨â®Ú·s¥[¤JªºVP©Ò¦bªºmetal layer
+			which_cell->_VP_layer.push_back(iter->first);       // ¨â®Ú·s¥[¤JªºVP©Ò¦bªºmetal layer
 			pre_vp.clear();
 			pre_vp = now_vp;
 			now_vp.clear();
-			each_dir = (each_dir == 1) ? 0 : 1;		//ä¸‹ä¸€å±¤èµ°å‘æ›´æ–°
+			each_dir = (each_dir == 1) ? 0 : 1;		//¤U¤@¼h¨«¦V§ó·s
 		}
 		//now_VP+= _all_cell_type_new[which_cell_type]->_this_type_all_cell.size();
-		now_vp = BuildVP(each_dir, pre_vp, iter->second->get_width(), 2);		//æœ€å¾Œä¸€æ ¹ : å€’æ•¸ç¬¬äºŒå±¤
+		now_vp = BuildVP(each_dir, pre_vp, iter->second->get_width(), 2);		//³Ì«á¤@®Ú : ­Ë¼Æ²Ä¤G¼h
 		which_cell->_VP.push_back(now_vp.at(0));
 		which_cell->_VP_layer.push_back(iter->first);
-
-}
-
-
-pin* design::find_outpin(cell_type* which_cell_type)
-{
-	for (int i = 0; i < which_cell_type->_all_pin.size(); ++i) {
-		if (which_cell_type->_all_pin.at(i)->getuse() == "OUTPUT") {
-			return which_cell_type->_all_pin.at(i);
-		}
 	}
 }
 
 
+
 ///
-RECT design::choose_base_pin_rect(cell_type* which_cell_type)           // find out outpin  & choose outpin's straight one rect
+RECT design::choose_base_pin_rect(cell_type* which_cell_type, int _M2_dir)           // find out outpin  & choose outpin's straight one rect
 {
 	pin* out_pin;
-	out_pin =find_outpin(which_cell_type);
-	for (int i = 0; i < out_pin->Get_rect().size(); ++i) {
-		if ((out_pin->Get_rect().at(i).Point(2, 'x') - out_pin->Get_rect().at(i).Point(1, 'x')) < (out_pin->Get_rect().at(i).Point(2, 'y') - out_pin->Get_rect().at(i).Point(1, 'y'))  ){
-			return out_pin->Get_rect().at(i);
-		}
+	out_pin =which_cell_type->find_outpin();
+	if (out_pin != NULL) {
+		/*for (int i = 0; i < out_pin->Get_rect().size(); ++i) {
+			if ((out_pin->Get_rect().at(i).Point(2, 'x') - out_pin->Get_rect().at(i).Point(1, 'x')) < (out_pin->Get_rect().at(i).Point(2, 'y') - out_pin->Get_rect().at(i).Point(1, 'y'))) {
+				return out_pin->Get_rect().at(i);
+			}
+		}*/
+		return out_pin->find_rect(_M2_dir);          // §ä¨ìª½ªº (if_M2_dir==1)  or ¦^¶Ç_access_flag=-1ªº¤@­Ó©U§£
+	}
+	else {                 //output pin =NULL  ( nearly impossible)
+		RECT trect;
+		trect._access_flag = -1;
+		return trect;
 	}
 
 	
@@ -1178,36 +1209,36 @@ void design::sort_cell_on_row()
 			//Temp_Cell_Name.first = iter2->second->get_x();
 			//Temp_Cell_Name.second = iter2->first;
 			//_sorted_cell_on_a_row.push_back(Temp_Cell_Name);
-			_sorted_cell_on_a_row.push_back(make_pair(iter2->second->get_x(), iter2->first));      //å¥½ç”¨!
+			_sorted_cell_on_a_row.push_back(make_pair(iter2->second->get_x(), iter2->first));      //¦n¥Î!
 		}
 
-		//  é–‹å§‹sortï¼Œ
+		//  ¶}©lsort¡A
 		sort(_sorted_cell_on_a_row.begin(), _sorted_cell_on_a_row.end(), cmp);
-		iter->second->_begin_cell = _sorted_cell_on_a_row.at(0).second;        //å¯«å…¥æ­¤rowç¬¬ä¸€å€‹cellçš„name
-		iter->second->_end_cell = _sorted_cell_on_a_row.back().second;        //å¯«å…¥æ­¤rowæœ€å¾Œä¸€å€‹cellçš„name
-		//å·¦å³cellç®—è·é›¢ï¼ŒæŒ‡æ¨™äº’æŒ‡
-		//å…ˆå¯«å…¥å·¦æŒ‡æ¨™
-		iter->second->_this_row_cells[_sorted_cell_on_a_row.at(0).second]->_left_cell.first = NULL;	//iter=this row        //_sorted_cell_on_a_row.at(0).second:  this row ä¸Šç¬¬ä¸€å€‹cellçš„name
+		iter->second->_begin_cell = _sorted_cell_on_a_row.at(0).second;        //¼g¤J¦¹row²Ä¤@­Ócellªºname
+		iter->second->_end_cell = _sorted_cell_on_a_row.back().second;        //¼g¤J¦¹row³Ì«á¤@­Ócellªºname
+		//¥ª¥kcellºâ¶ZÂ÷¡A«ü¼Ğ¤¬«ü
+		//¥ı¼g¤J¥ª«ü¼Ğ
+		iter->second->_this_row_cells[_sorted_cell_on_a_row.at(0).second]->_left_cell.first = NULL;	//iter=this row        //_sorted_cell_on_a_row.at(0).second:  this row ¤W²Ä¤@­Ócellªºname
 		iter->second->_this_row_cells[_sorted_cell_on_a_row.at(0).second]->_left_cell.second =abs( iter->second->get_row_site_x()- iter->second->_this_row_cells[_sorted_cell_on_a_row.at(0).second]->get_x());
 		for (int i = 1; i < _sorted_cell_on_a_row.size(); ++i) {
-			iter->second->_this_row_cells[_sorted_cell_on_a_row.at(i).second]->_left_cell.first = iter->second->_this_row_cells[_sorted_cell_on_a_row.at(i - 1).second];     //_left_cell *= å·¦é‚Šé‚£é¡†cell*
-			iter->second->_this_row_cells[_sorted_cell_on_a_row.at(i).second]->_left_cell.second =abs( iter->second->_this_row_cells[_sorted_cell_on_a_row.at(i - 1).second]->get_x() + _all_cell_type_new[iter->second->_this_row_cells[_sorted_cell_on_a_row.at(i - 1).second]->get_parent_cell_type()]->get_size() * _units		-	iter->second->_this_row_cells[_sorted_cell_on_a_row.at(i).second]->get_x()     );    //_left_cell.second= èˆ‡å·¦é‚Šé‚£é¡†cellæœ€è¿‘çš„è·é›¢
+			iter->second->_this_row_cells[_sorted_cell_on_a_row.at(i).second]->_left_cell.first = iter->second->_this_row_cells[_sorted_cell_on_a_row.at(i - 1).second];     //_left_cell *= ¥ªÃä¨ºÁûcell*
+			iter->second->_this_row_cells[_sorted_cell_on_a_row.at(i).second]->_left_cell.second =abs( iter->second->_this_row_cells[_sorted_cell_on_a_row.at(i - 1).second]->get_x() + _all_cell_type_new[iter->second->_this_row_cells[_sorted_cell_on_a_row.at(i - 1).second]->get_parent_cell_type()]->get_size() * _units		-	iter->second->_this_row_cells[_sorted_cell_on_a_row.at(i).second]->get_x()     );    //_left_cell.second= »P¥ªÃä¨ºÁûcell³Ìªñªº¶ZÂ÷
 		}
 
-		//å†å¯«å…¥å³é‚ŠæŒ‡æ¨™
-		iter->second->_this_row_cells[_sorted_cell_on_a_row.at(_sorted_cell_on_a_row.size()-1).second]->_right_cell.first = NULL;	//iter=this row        //_sorted_cell_on_a_row.at(_sorted_cell_on_a_row.size()-1).second:  this row ä¸Šæœ€å¾Œä¸€å€‹cellçš„name
-		iter->second->_this_row_cells[_sorted_cell_on_a_row.at(_sorted_cell_on_a_row.size() - 1).second]->_right_cell.second = abs(iter->second->get_row_site_x_end()		-	( iter->second->_this_row_cells[_sorted_cell_on_a_row.at(_sorted_cell_on_a_row.size() - 1).second]->get_x()	+	_all_cell_type_new[iter->second->_this_row_cells[_sorted_cell_on_a_row.at(_sorted_cell_on_a_row.size() - 1).second]->get_parent_cell_type()]->get_size() * _units)	);		//_right_cell.second= æ­¤cellæœ€å³é‚Šèˆ‡æœ€å³é‚Šrowçš„åº•çš„è·é›¢
-		//cout << "æœ€å¾Œä¸€å€‹cellçš„x :  " << iter->second->_this_row_cells[_sorted_cell_on_a_row.at(_sorted_cell_on_a_row.size() - 1).second]->get_x() << endl;
-		//cout << "æœ€å¾Œä¸€å€‹cellçš„å¯¬: " << _all_cell_type_new[iter->second->_this_row_cells[_sorted_cell_on_a_row.at(_sorted_cell_on_a_row.size() - 1).second]->get_parent_cell_type()]->get_size() * _units << endl;
+		//¦A¼g¤J¥kÃä«ü¼Ğ
+		iter->second->_this_row_cells[_sorted_cell_on_a_row.at(_sorted_cell_on_a_row.size()-1).second]->_right_cell.first = NULL;	//iter=this row        //_sorted_cell_on_a_row.at(_sorted_cell_on_a_row.size()-1).second:  this row ¤W³Ì«á¤@­Ócellªºname
+		iter->second->_this_row_cells[_sorted_cell_on_a_row.at(_sorted_cell_on_a_row.size() - 1).second]->_right_cell.second = abs(iter->second->get_row_site_x_end()		-	( iter->second->_this_row_cells[_sorted_cell_on_a_row.at(_sorted_cell_on_a_row.size() - 1).second]->get_x()	+	_all_cell_type_new[iter->second->_this_row_cells[_sorted_cell_on_a_row.at(_sorted_cell_on_a_row.size() - 1).second]->get_parent_cell_type()]->get_size() * _units)	);		//_right_cell.second= ¦¹cell³Ì¥kÃä»P³Ì¥kÃärowªº©³ªº¶ZÂ÷
+		//cout << "³Ì«á¤@­Ócellªºx :  " << iter->second->_this_row_cells[_sorted_cell_on_a_row.at(_sorted_cell_on_a_row.size() - 1).second]->get_x() << endl;
+		//cout << "³Ì«á¤@­Ócellªº¼e: " << _all_cell_type_new[iter->second->_this_row_cells[_sorted_cell_on_a_row.at(_sorted_cell_on_a_row.size() - 1).second]->get_parent_cell_type()]->get_size() * _units << endl;
 		for (int i = _sorted_cell_on_a_row.size()-2;  i >=0; --i) {
-			iter->second->_this_row_cells[_sorted_cell_on_a_row.at(i).second]->_right_cell.first = iter->second->_this_row_cells[_sorted_cell_on_a_row.at(i + 1).second];     //_right_cell *= å³é‚Šé‚£é¡†cell*
-			iter->second->_this_row_cells[_sorted_cell_on_a_row.at(i).second]->_right_cell.second = abs(iter->second->_this_row_cells[_sorted_cell_on_a_row.at(i + 1).second]->get_x()   -  (		_all_cell_type_new[iter->second->_this_row_cells[_sorted_cell_on_a_row.at(i).second]->get_parent_cell_type()]->get_size() * _units +  iter->second->_this_row_cells[_sorted_cell_on_a_row.at(i).second]->get_x()	  )	);    //_right_cell.second= èˆ‡å³é‚Šé‚£é¡†cellæœ€è¿‘çš„è·é›¢
+			iter->second->_this_row_cells[_sorted_cell_on_a_row.at(i).second]->_right_cell.first = iter->second->_this_row_cells[_sorted_cell_on_a_row.at(i + 1).second];     //_right_cell *= ¥kÃä¨ºÁûcell*
+			iter->second->_this_row_cells[_sorted_cell_on_a_row.at(i).second]->_right_cell.second = abs(iter->second->_this_row_cells[_sorted_cell_on_a_row.at(i + 1).second]->get_x()   -  (		_all_cell_type_new[iter->second->_this_row_cells[_sorted_cell_on_a_row.at(i).second]->get_parent_cell_type()]->get_size() * _units +  iter->second->_this_row_cells[_sorted_cell_on_a_row.at(i).second]->get_x()	  )	);    //_right_cell.second= »P¥kÃä¨ºÁûcell³Ìªñªº¶ZÂ÷
 		}
 
 		_sorted_cell_on_a_row.clear();
 	}
 }
-void design::output_lef_file(string outfilename)                  //æ²’è€ƒæ…®åˆ°écell (MACRO)
+void design::output_lef_file(string outfilename)                  //¨S¦Ò¼{¨ì«Dcell (MACRO)
 {
 
 	ofstream fout;
@@ -1222,7 +1253,7 @@ void design::output_lef_file(string outfilename)                  //æ²’è€ƒæ…®åˆ°
 			fout << "    SIZE " << s.second->get_size() << " BY " << s.second->get_by() << " ;" << endl;
 			fout << "    SYMMETRY X Y ;" << endl;
 			fout << "    SITE CoreSite ; " << endl;
-			for (int i = 0;i< s.second->_all_pin.size(); ++i){                           //ä¸€å€‹pin
+			for (int i = 0;i< s.second->_all_pin.size(); ++i){                           //¤@­Ópin
 				fout << "    PIN " << s.second->_all_pin.at(i)->getname() << endl;
 				fout << "        DIRECTION " << s.second->_all_pin.at(i)->getdir() << " ;" << endl;
 				fout << "        USE " << s.second->_all_pin.at(i)->getuse()<< " ;"<< endl;
@@ -1231,7 +1262,7 @@ void design::output_lef_file(string outfilename)                  //æ²’è€ƒæ…®åˆ°
 				string pre_pin_layer, now_pin_layer;
 				pre_pin_layer.clear();
 				now_pin_layer.clear();
-				for (int j = 0; j < s.second->_all_pin.at(i)->Get_rect_size(); ++j) {          //é€™å€‹pinæ‰€æœ‰çš„RECT
+				for (int j = 0; j < s.second->_all_pin.at(i)->Get_rect_size(); ++j) {          //³o­Ópin©Ò¦³ªºRECT
 					now_pin_layer = s.second->_all_pin.at(i)->getlayer().at(j);
 					if (pre_pin_layer != now_pin_layer) {
 						fout << "           LAYER " << s.second->_all_pin.at(i)->getlayer().at(j) << " ;" << endl;
@@ -1265,20 +1296,20 @@ void design::output_lef_file(string outfilename)                  //æ²’è€ƒæ…®åˆ°
 							s.second->_all_pin.at(i)->_obs.at(k).Point(2, 'x') << " " <<
 							s.second->_all_pin.at(i)->_obs.at(k).Point(2, 'y') << " ;" << endl;
 						pre_layer = now_layer;
-					}    //æ‰€æœ‰OBSçµæŸ
+					}    //©Ò¦³OBSµ²§ô
 					fout << "        END" << endl;
 					fout<<"    END " << "t" + s.second->_all_pin.at(i)->getname() << endl;
 
-				}       //if æ­¤pin OBS!=0						
-			}       //ä¸€å€‹pin
+				}       //if ¦¹pin OBS!=0						
+			}       //¤@­Ópin
 
 
-			/*for (int i = 0; i < s.second->_all_OBS.size(); ++i) {                           //ä¸€å€‹OBS
+			/*for (int i = 0; i < s.second->_all_OBS.size(); ++i) {                           //¤@­ÓOBS
 				fout << "OBS" << endl;
 				string pre_obspin_layer, now_obspin_layer;
 				pre_obspin_layer.clear();
 				now_obspin_layer.clear();
-				for (int j = 0; j < s.second->_all_OBS.at(i)->get_RECT_size(); ++j) {          //é€™å€‹pinæ‰€æœ‰çš„RECT
+				for (int j = 0; j < s.second->_all_OBS.at(i)->get_RECT_size(); ++j) {          //³o­Ópin©Ò¦³ªºRECT
 					now_obspin_layer = s.second->_all_OBS.at(i)->getlayer().at(j);
 					if (pre_obspin_layer != now_obspin_layer) {
 						fout << "           LAYER " << s.second->_all_OBS.at(i)->getlayer().at(j) << " ;" << endl;
@@ -1296,19 +1327,20 @@ void design::output_lef_file(string outfilename)                  //æ²’è€ƒæ…®åˆ°
 
 
 			fout<<"END "<< s.first << endl<<endl;
-		}		// _all_cell_typeçµæŸäº†
+		}		// _all_cell_typeµ²§ô¤F
 		fout << "END LIBRARY" << endl;
 	}
 }
 void design::output_dodge_lef_file(string outfilename)
 {
+	cout << " start output_dodge_lef_file" << endl;
 	ofstream fout;
 	fout.open(outfilename, ios::out);
 	if (!fout.is_open())  cout << "output.lef is not open ! " << endl;
 	else {
 		for (const auto& s : _all_cell_type_new) {
-			if (s.second->_has_insert_VP == 1) {                                    // æ­¤cell typeæœ‰æ‰“VP: æ­¤cell typeçš„æ‰€æœ‰celléƒ½æ‰“äº†ä¸ä¸€æ¨£çš„VP-->  ç‚ºä¸åŒç¨®é¡çš„cell typeäº†
-				for (int c = 0; c < s.second->_this_type_all_cell.size(); ++c) {                  // æ­¤cell typeçš„æ¯å€‹cell : ä¸åŒçš„æ–°çš„cell type
+			if (s.second->_has_insert_VP == 1) {                                    // ¦¹cell type¦³¥´VP: ¦¹cell typeªº©Ò¦³cell³£¥´¤F¤£¤@¼ËªºVP-->  ¬°¤£¦PºØÃşªºcell type¤F
+				for (int c = 0; c < s.second->_this_type_all_cell.size(); ++c) {                  // ¦¹cell typeªº¨C­Ócell : ¤£¦Pªº·sªºcell type
 					string _this_cell_type_name = s.second->_this_type_all_cell.at(c)->_new_cell_type_name;
 					fout << "MACRO " << _this_cell_type_name << endl;
 					fout << "    CLASS CORE ;" << endl;
@@ -1318,8 +1350,8 @@ void design::output_dodge_lef_file(string outfilename)
 					fout << "    SYMMETRY X Y ;" << endl;
 					fout << "    SITE CoreSite ; " << endl;
 
-					for (int i = 0; i < s.second->_all_pin.size(); ++i) {                           //åˆ—å‡ºæ¯å€‹pin
-						if (s.second->_all_pin.at(i) != find_outpin(s.second)) {             //é€™å€‹pinä¸æ˜¯æ‰“VPçš„output pin
+					for (int i = 0; i < s.second->_all_pin.size(); ++i) {                           //¦C¥X¨C­Ópin
+						if (s.second->_all_pin.at(i) != find_outpin(s.second)) {             //³o­Ópin¤£¬O¥´VPªºoutput pin
 							fout << "    PIN " << s.second->_all_pin.at(i)->getname() << endl;
 							fout << "        DIRECTION " << s.second->_all_pin.at(i)->getdir() << " ;" << endl;
 							fout << "        USE " << s.second->_all_pin.at(i)->getuse() << " ;" << endl;
@@ -1328,7 +1360,7 @@ void design::output_dodge_lef_file(string outfilename)
 							string pre_pin_layer, now_pin_layer;
 							pre_pin_layer.clear();
 							now_pin_layer.clear();
-							for (int j = 0; j < s.second->_all_pin.at(i)->Get_rect_size(); ++j) {          //é€™å€‹pinæ‰€æœ‰çš„RECT
+							for (int j = 0; j < s.second->_all_pin.at(i)->Get_rect_size(); ++j) {          //³o­Ópin©Ò¦³ªºRECT
 								now_pin_layer = s.second->_all_pin.at(i)->getlayer().at(j);
 								if (pre_pin_layer != now_pin_layer) {
 									fout << "           LAYER " << s.second->_all_pin.at(i)->getlayer().at(j) << " ;" << endl;
@@ -1339,11 +1371,11 @@ void design::output_dodge_lef_file(string outfilename)
 									" " << s.second->_all_pin.at(i)->Get_rect().at(j).Point(2, 'x') <<
 									" " << s.second->_all_pin.at(i)->Get_rect().at(j).Point(2, 'y') << " ;" << endl;
 								pre_pin_layer = now_pin_layer;
-							}                           //é€™å€‹pinæ‰€æœ‰çš„RECTçµæŸ
+							}                           //³o­Ópin©Ò¦³ªºRECTµ²§ô
 							fout << "        END" << endl;
-							fout << "    END " << s.second->_all_pin.at(i)->getname() << endl;             //  çµæŸä¸€å€‹éoutputçš„ pin
-						}       //  çµæŸä¸€å€‹éoutputçš„ pin
-						else {		        //é€™å€‹pinæ˜¯æ‰“äº†VPçš„output pin
+							fout << "    END " << s.second->_all_pin.at(i)->getname() << endl;             //  µ²§ô¤@­Ó«Doutputªº pin
+						}       //  µ²§ô¤@­Ó«Doutputªº pin
+						else {		        //³o­Ópin¬O¥´¤FVPªºoutput pin
 							fout << "    PIN " << s.second->_all_pin.at(i)->getname() << endl;
 							fout << "        DIRECTION " << s.second->_all_pin.at(i)->getdir() << " ;" << endl;
 							fout << "        USE " << s.second->_all_pin.at(i)->getuse() << " ;" << endl;
@@ -1356,9 +1388,9 @@ void design::output_dodge_lef_file(string outfilename)
 								" " << s.second->_this_type_all_cell.at(c)->_VP.back().Point(2, 'y') << " ;" << endl;
 
 							fout << "        END" << endl;
-							fout << "    END " << s.second->_all_pin.at(i)->getname() << endl;             //  çµæŸä¸€å€‹output pin
+							fout << "    END " << s.second->_all_pin.at(i)->getname() << endl;             //  µ²§ô¤@­Óoutput pin
 
-							//é€™å€‹output pinçš„VPè¦å¦å¤–å»ºæˆä¸€å€‹pin
+							//³o­Óoutput pinªºVP­n¥t¥~«Ø¦¨¤@­Ópin
 							fout << "    PIN " << s.second->_this_type_all_cell.at(c)->_VP_pin_name << endl;
 							fout << "        DIRECTION " << "INPUT" << " ;" << endl;
 							fout << "        USE " << "SIGNAL" << " ;" << endl;
@@ -1366,7 +1398,7 @@ void design::output_dodge_lef_file(string outfilename)
 							string pre_pin_layer, now_pin_layer;
 							pre_pin_layer.clear();
 							now_pin_layer.clear();
-							for (int j = 0; j < s.second->_all_pin.at(i)->Get_rect_size(); ++j) {          //é€™å€‹output pinåŸæœ¬metal 1æ‰€æœ‰çš„RECT
+							for (int j = 0; j < s.second->_all_pin.at(i)->Get_rect_size(); ++j) {          //³o­Óoutput pin­ì¥»metal 1©Ò¦³ªºRECT
 								now_pin_layer = s.second->_all_pin.at(i)->getlayer().at(j);
 								if (pre_pin_layer != now_pin_layer) {
 									fout << "           LAYER " << s.second->_all_pin.at(i)->getlayer().at(j) << " ;" << endl;
@@ -1377,34 +1409,34 @@ void design::output_dodge_lef_file(string outfilename)
 									" " << s.second->_all_pin.at(i)->Get_rect().at(j).Point(2, 'x') <<
 									" " << s.second->_all_pin.at(i)->Get_rect().at(j).Point(2, 'y') << " ;" << endl;
 								pre_pin_layer = now_pin_layer;
-							}            //é€™å€‹output pinåŸæœ¬metal 1æ‰€æœ‰çš„RECTçµæŸ
+							}            //³o­Óoutput pin­ì¥»metal 1©Ò¦³ªºRECTµ²§ô
 							pre_pin_layer.clear();
 							now_pin_layer.clear();
-							//é€™å€‹output pinä¸ŠåŠ è“‹çš„VP  (å¾ˆå¤šå€‹RECT, å¾ˆå¤šå±¤)
+							//³o­Óoutput pin¤W¥[»\ªºVP  («Ü¦h­ÓRECT, «Ü¦h¼h)
 
-							for (int j = 0; j < s.second->_this_type_all_cell.at(c)->_VP.size() - 1; ++j) {          //é€™å€‹cellä¸ŠåŠ è“‹çš„VP (RECTs)
+							for (int j = 0; j < s.second->_this_type_all_cell.at(c)->_VP.size() - 1; ++j) {          //³o­Ócell¤W¥[»\ªºVP (RECTs)
 								now_pin_layer = s.second->_this_type_all_cell.at(c)->_VP_layer.at(j);
 								if (pre_pin_layer != now_pin_layer) {
 									fout << "           LAYER " << s.second->_this_type_all_cell.at(c)->_VP_layer.at(j) << " ;" << endl;
 								}
 
 								fout << "            RECT " << s.second->_this_type_all_cell.at(c)->_VP.at(j).Point(1, 'x') <<
-									" " << s.second->_all_pin.at(i)->Get_rect().at(j).Point(1, 'y') <<
-									" " << s.second->_all_pin.at(i)->Get_rect().at(j).Point(2, 'x') <<
-									" " << s.second->_all_pin.at(i)->Get_rect().at(j).Point(2, 'y') << " ;" << endl;
+									" " << s.second->_this_type_all_cell.at(c)->_VP.at(j).Point(1, 'y') <<
+									" " << s.second->_this_type_all_cell.at(c)->_VP.at(j).Point(2, 'x') <<
+									" " << s.second->_this_type_all_cell.at(c)->_VP.at(j).Point(2, 'y') << " ;" << endl;
 								pre_pin_layer = now_pin_layer;
-							}             // é€™å€‹cellä¸ŠåŠ è“‹çš„VP (RECTs) -->è®Šæˆä¸€å€‹æ–°çš„pin  çµæŸã€‚
+							}             // ³o­Ócell¤W¥[»\ªºVP (RECTs) -->ÅÜ¦¨¤@­Ó·sªºpin  µ²§ô¡C
 
 							fout << "        END" << endl;
-							fout << "    END " << s.second->_this_type_all_cell.at(c)->_VP_pin_name << endl;             //  çµæŸä¸€å€‹output pinçš„VPè¦å¦å¤–å»ºæˆä¸€å€‹pin
-						}                     // çµæŸä¸€å€‹æ‰“äº†VPçš„output pin : åŸoutput pin + æ–°çš„VP pin     (else)
+							fout << "    END " << s.second->_this_type_all_cell.at(c)->_VP_pin_name << endl;             //  µ²§ô¤@­Óoutput pinªºVP­n¥t¥~«Ø¦¨¤@­Ópin
+						}                     // µ²§ô¤@­Ó¥´¤FVPªºoutput pin : ­ìoutput pin + ·sªºVP pin     (else)
 
 					}
-					//æ­¤cell typeçš„ä¸€å€‹cellçš„æ‰€æœ‰pinçµæŸ  (ä¸€å€‹new cell typeçš„æ‰€æœ‰pinçµæŸ)
+					//¦¹cell typeªº¤@­Ócellªº©Ò¦³pinµ²§ô  (¤@­Ónew cell typeªº©Ò¦³pinµ²§ô)
 					fout << "END " << _this_cell_type_name << endl << endl;
-				}		//æ­¤cell typeçš„ä¸€å€‹cellçµæŸ  (ä¸€å€‹new cell typeçµæŸ)
-			}     // æ­¤cell typeæœ‰æ‰“VP
-			else {                                    //æ­¤cell typeæ²’æ‰“VP
+				}		//¦¹cell typeªº¤@­Ócellµ²§ô  (¤@­Ónew cell typeµ²§ô)
+			}     // ¦¹cell type¦³¥´VP
+			else {                                    //¦¹cell type¨S¥´VP
 
 				fout << "MACRO " << s.first << endl;
 				fout << "    CLASS CORE ;" << endl;
@@ -1413,7 +1445,7 @@ void design::output_dodge_lef_file(string outfilename)
 				fout << "    SIZE " << s.second->get_size() << " BY " << s.second->get_by() << " ;" << endl;
 				fout << "    SYMMETRY X Y ;" << endl;
 				fout << "    SITE CoreSite ; " << endl;
-				for (int i = 0; i < s.second->_all_pin.size(); ++i) {                           //ä¸€å€‹pin
+				for (int i = 0; i < s.second->_all_pin.size(); ++i) {                           //¤@­Ópin
 					fout << "    PIN " << s.second->_all_pin.at(i)->getname() << endl;
 					fout << "        DIRECTION " << s.second->_all_pin.at(i)->getdir() << " ;" << endl;
 					fout << "        USE " << s.second->_all_pin.at(i)->getuse() << " ;" << endl;
@@ -1422,7 +1454,7 @@ void design::output_dodge_lef_file(string outfilename)
 					string pre_pin_layer, now_pin_layer;
 					pre_pin_layer.clear();
 					now_pin_layer.clear();
-					for (int j = 0; j < s.second->_all_pin.at(i)->Get_rect_size(); ++j) {          //é€™å€‹pinæ‰€æœ‰çš„RECT
+					for (int j = 0; j < s.second->_all_pin.at(i)->Get_rect_size(); ++j) {          //³o­Ópin©Ò¦³ªºRECT
 						now_pin_layer = s.second->_all_pin.at(i)->getlayer().at(j);
 						if (pre_pin_layer != now_pin_layer) {
 							fout << "           LAYER " << s.second->_all_pin.at(i)->getlayer().at(j) << " ;" << endl;
@@ -1436,18 +1468,20 @@ void design::output_dodge_lef_file(string outfilename)
 					}
 					fout << "        END" << endl;
 					fout << "    END " << s.second->_all_pin.at(i)->getname() << endl;
-				}       //ä¸€å€‹pin
+				}       //¤@­Ópin
 				fout << "END " << s.first << endl << endl;
-			}         //æ­¤cell typeæ²’æ‰“VP
-		}                  // _all_cell_type_new éƒ½çµæŸäº†
+			}         //¦¹cell type¨S¥´VP
+		}                  // _all_cell_type_new ³£µ²§ô¤F
 		fout << "END LIBRARY" << endl;
 		fout.close();
-	}                 // å¯ä»¥è®€æª”çš„else
+	}                 // ¥i¥HÅªÀÉªºelse
+	cout << " finish output_dodge_lef_file" << endl;
 }
 void design::output_dodge_def_file(string outfilename)
 {    
 	///- FILLER_94475 FILLCELL2 + PLACED ( 708200 1172000 ) N
 	///;
+	cout << " start output_dodge_def_file" << endl;
 	ofstream fout;
 	fout.open(outfilename, ios::out);
 	if (!fout.is_open())  cout << "output.lef is not open ! " << endl;
@@ -1457,13 +1491,14 @@ void design::output_dodge_def_file(string outfilename)
 			fout << "- " << s.first << " ";
 			if (s.second->_new_cell_type_name == "")      fout << s.second->get_parent_cell_type();
 			else    fout << s.second->_new_cell_type_name;
-			fout << " + PLACED ( " << s.second->get_x() << " " << s.second->get_y()
+			fout << " + "<<s.second->get_placed_or_fixed()<<" ( " << fixed<< setprecision(0)<<s.second->get_x() << " " << fixed<< setprecision(0)<< s.second->get_y()
 				<< " ) " << s.second->get_orient() << endl;
 			fout << ";" << endl;
 		}
 		fout << "END COMPONENTS" << endl;
 		fout.close();
 	}
+	cout << " finish output_dodge_def_file" << endl;
 }
 void design::cout_cell_lef()
 {
@@ -1655,68 +1690,22 @@ void design::make_rtree_M1()
 	cout << "finish make_rtree_M1 " << endl;
 }
 
-/////////////////////////////////////å‚³é€²ä¾†çš„box: _new_VPè¦åŠ ä¸Šcell _x_coordinate, _y_coordinateçš„
-bool design::oneMetal_VP_overlap(string _MET_LAYER, string _CELL_NAME, string _PIN_NAME, box  _new_VP)
+/////////////////////////////////////¶Ç¶i¨Óªºbox: _new_VP­n¥[¤Wcell _x_coordinate, _y_coordinateªº
+vector<value> design::oneMetal_VP_overlap(string _rTree_index, string _CELL_NAME, string _PIN_NAME, box  _new_VP)
 {
-	int _VP_layer = int(_MET_LAYER.back());
-	int flag = -1;
-	vector<value>_intersect_result, _m2_own_pin_result, _m3_pg, _m4_pg;
-	_intersect_result.clear(), _m2_own_pin_result.clear(), _m3_pg.clear(), _m4_pg.clear();
-	///////M2 have to check with M1 RTree & M3M4 PG,  M3&M4 have to check with M3M4's PG nets && its own layer's other VPs,  M5~M8: check with its own layer
-	if (_VP_layer==2) {
-		forest["rtMetal"+ to_string(_VP_layer-1)]->query(bgi::intersects(_new_VP), back_inserter(_intersect_result));
-		forest["rt"+ _MET_LAYER]->query(bgi::intersects(_new_VP), back_inserter(_m2_own_pin_result));
-		_intersect_result.insert(_intersect_result.end(), _m2_own_pin_result.begin(), _m2_own_pin_result.end());
+	cout << "start box with " << _rTree_index<<" overlap "<< endl;
+	vector<value>_intersect_result;
+	_intersect_result.clear();
 
-		forest["rt_Metal3"]->query(bgi::intersects(_new_VP), back_inserter(_m3_pg));
-		_intersect_result.insert(_intersect_result.end(), _m3_pg.begin(), _m3_pg.end());
-
-		forest["rt_Metal4"]->query(bgi::intersects(_new_VP), back_inserter(_m4_pg));
-		_intersect_result.insert(_intersect_result.end(), _m4_pg.begin(), _m4_pg.end());
-	}
-	else {
-		forest["rt"+ _MET_LAYER]->query(bgi::intersects(_new_VP), back_inserter(_intersect_result));
-	}
-
-	if (!_intersect_result.empty()) {			// has some pins overlap with _VP_box
-		//for (auto iter= _intersect_result.begin(); iter!= _intersect_result.end(); ++iter) {
-		//	if(  (rTree_value .at(*iter).first== _CELL_NAME)  && (rTree_value.at(*iter).second == _PIN_NAME)  ){
-		//	//if ( (iter->first == _CELL_NAME)&& (iter->second == _PIN_NAME) ){
-		//		_intersect_result.erase(iter);
-		//	}
-		if (_intersect_result.size() == 1) {
-			if ((rTree_value.at (_intersect_result.at(0).second ) .first == _CELL_NAME) && (rTree_value.at(_intersect_result.at(0).second).second == _PIN_NAME)) {
-				flag = 0;							// no any overlap !   (return false)
+		forest[_rTree_index]->query(bgi::intersects(_new_VP), back_inserter(_intersect_result));
+		for (int i = 0; i < _intersect_result.size(); ++i) {
+			if (rTree_value.at(_intersect_result.at(i).second).first == _CELL_NAME && rTree_value.at(_intersect_result.at(i).second).second == _PIN_NAME) {
+				_intersect_result.erase(_intersect_result.begin()+i);
+				break;
 			}
-			else  flag = 1;					//has some overlap  (return true)
 		}
-		else  flag = 1;					//has some overlap  (return true)
-		
-		//if (!_intersect_result.empty())  flag = 1;      //has some overlap  (return true)
-		//else  flag = 0;       // no any overlap !   (return false)
-		
+		return _intersect_result;
 	}
-	else {
-		flag = 0;            // no any overlap !   (return false)
-	}
-
-	//////////////////////////legel  _new_VP needs to add to that layer;s RTree
-	////////////////how to add (box's value)  : (b, make_pair(_cellName, _pin_name))
-	if (!flag) {
-		rTree_value.push_back(make_pair(_CELL_NAME, "t" + _PIN_NAME));
-		int _rTree_value_index = rTree_value.size() - 1;
-		forest["rt"+ _MET_LAYER]->insert(make_pair(_new_VP, _rTree_value_index));				//but there may be a problem: 
-			return false;        // no any overlap (great).
-	}
-	else if (flag) {
-		return true;			// did overlap!
-	}
-	else {
-		cerr << "someting wrong !!!" << endl;
-	}
-
-}
-
 
 void design::make_PG_rtree_M3M4()
 {
@@ -1753,10 +1742,10 @@ void design::make_PG_rtree_M3M4()
 		else if (_VDD_VSS.at(i).at(1)=="Matel4")	RTREE_M4->insert(make_pair(b, _rTree_value_index));
 	}
 	//  forest  push_back()  RTREE_M3, RTREE_M4  
-	forest.insert({ "rt_Metal3", RTREE_M3 });
-	forest.insert({ "rt_Metal4", RTREE_M4 });
+	forest.insert({ "rtMetal3", RTREE_M3 });
+	forest.insert({ "rtMetal4", RTREE_M4 });
 
 	cout << "end make_PG_rtree_M3M4 " << endl;
 	rTree* RTREE_M2 = new rTree;
-	forest.insert({ "rt_Metal2", RTREE_M2 });
+	forest.insert({ "rtMetal2", RTREE_M2 });
 }

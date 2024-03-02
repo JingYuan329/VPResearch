@@ -31,6 +31,7 @@ public:
 		else return 1;					//vertical
 	};
 
+	int _access_flag = 0;
 	//get_point(2, x) = 200.200;
 private:
 	pair<pair<double, double>, pair<double, double>>_RECT_;
@@ -104,23 +105,48 @@ public:
 		_pin_shape.set_rect(_a_RECT);
 	};
 	void Clear_rect() { _pin_shape.clear_rect(); };
-	vector<RECT>Get_rect() {return  _pin_shape.get_rect(); };
-	int Get_rect_size() { return   _pin_shape.get_rect_size(); };
+	vector<RECT>Get_rect() { return _pin_shape.get_rect(); };
+	int Get_rect_size() { return _pin_shape.get_rect_size(); };
+	RECT find_rect(int _M2_dir) {
+			for (int i = 0; i < Get_rect_size(); ++i) {
+				if ((Get_rect().at(i).horizontal_or_straight()== _M2_dir)&& (Get_rect().at(i)._access_flag==0)){
+					Get_rect().at(i)._access_flag = 1;
+					return Get_rect().at(i);
+				}
+			}
+
+		/*	for (int i = 0; i < Get_rect_size(); ++i) {
+				if (Get_rect().at(i)._access_flag == 0) {
+					Get_rect().at(i)._access_flag = 1;
+					return Get_rect().at(i);
+				}
+			}*/
+				RECT trect;
+				trect._access_flag = -1;
+			return trect;
+
+	};
+
+	void _reset_all_RECT_access() {
+		for (int i = 0; i < Get_rect_size(); ++i) {
+			Get_rect().at(i)._access_flag = 0;
+		}
+	};
 
 
 	////obs
-	vector<RECT>_obs;                 //ä»¥å‰çš„VPè³‡è¨Šè£åœ¨é€™è£é¢ã€‚ç¾åœ¨VPè³‡è¨Šè£åœ¨æ¯å€‹cellå…§
+	vector<RECT>_obs;                 //¥H«eªºVP¸ê°T¸Ë¦b³oùØ­±¡C²{¦bVP¸ê°T¸Ë¦b¨C­Ócell¤º
 	vector<string>_obs_layer;
 
 private:
 	string _pin_name;
 	string _dir;				  //INPUT or OUTPUT     // INOUT
 	string _use;				//SIGNAL  or POWER or GROUND
-	//string _layer;				// ex: metal1     //if  PIN o:  åšè½æˆ2å€‹RECT, æœ‰å¯èƒ½å…©å€‹RECTåœ¨ä¸åŒå±¤----> vector<string> _layer
+	//string _layer;				// ex: Metal1     //if  PIN o:  °µ¸¨¦¨2­ÓRECT, ¦³¥i¯à¨â­ÓRECT¦b¤£¦P¼h----> vector<string> _layer
 	vector<string> _layer;
 	pin_shape _pin_shape;       //vector<RECT>_rect;
 	////obs
 
-	//////////////pin éœ€ä¸éœ€è¦è¨˜å¾—è‡ªå·±çš„cell typeåå­—
+	//////////////pin »İ¤£»İ­n°O±o¦Û¤vªºcell type¦W¦r
 
 };

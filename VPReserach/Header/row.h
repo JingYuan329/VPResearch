@@ -12,12 +12,12 @@ public:
 	string get_row_name() { return _row_name; };
 	double get_row_site_x() { return _row_site_x; };
 	double get_row_site_y() { return _row_site_y; };
-	double get_row_site_x_end() { return _row_site_x+ _DO* _STEP.first; };					//ä¸ç¢ºå®šæ˜¯ä¸æ˜¯é€™æ¨£
+	double get_row_site_x_end() { return _row_site_x+ _DO* _STEP.first; };					//¤£½T©w¬O¤£¬O³o¼Ë
 	string get_ROW_orient() { return _ORIENT; };
 
 	map<string,cell*>_this_row_cells;
-	string _begin_cell;					//æ­¤rowç¬¬ä¸€å€‹cell çš„åå­—
-	string _end_cell;						//æ­¤rowæœ€å¾Œä¸€å€‹cell çš„åå­—	
+	string _begin_cell;					//¦¹row²Ä¤@­Ócell ªº¦W¦r
+	string _end_cell;						//¦¹row³Ì«á¤@­Ócell ªº¦W¦r	
 
 
 private:

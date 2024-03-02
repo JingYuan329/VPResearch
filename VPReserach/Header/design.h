@@ -22,7 +22,8 @@ namespace bgi = boost::geometry::index;
 typedef bg::model::point<float, 2, bg::cs::cartesian> point;
 typedef bg::model::box<point> box;
 typedef std::pair<box, unsigned> value;
-typedef bgi::rtree< value, bgi::quadratic<16>> rTree;
+typedef bgi::rtree< value, bgi::quadratic<150000>> rTree;
+//typedef std::pair<box, unsigned> value;
 
 class design {
 public:
@@ -37,10 +38,9 @@ public:
 	void insert_all_VP_initial();
 	void insert_some_VP_initial(double percent);
 	//pair<pair<pair<double,double>,pair<double,double>>>
-	void dodge_pin_VP(cell_type* which_cell_type, cell* which_cell);
+	void dodge_pin_VP( cell* which_cell);
 	void insert_dodge_VP(double percent);
-	pin* find_outpin(cell_type* which_cell_type);
-	RECT choose_base_pin_rect(cell_type* which_cell_type);
+	RECT choose_base_pin_rect(cell_type* which_cell_type,int _M2_dir);
 
 	
 	void offset(vector<pair<pair<double, double>, pair<double, double>>>& _now_vp, double _bias, double _low_bound, double _up_bound);
@@ -55,13 +55,13 @@ public:
 
 
 
-	// R_tree
+	//R_tree
 	map<string,rTree*> forest;        //M1-M8's tree's name;    M1-M8's tree
 	vector<pair<string,string>> rTree_value;
 	// insert new value : a M1 cell's one pin in RTREE 
 	//RTREE->insert(make_pair(b, make_pair(_cellName, _pin_name)));     --->  RTREE->insert(make_pair(b, vector index ))
 	void make_rtree_M1();
-	bool oneMetal_VP_overlap(string _MET_LAYER, string _CELL_NAME, string _PIN_NAME, box  _new_VP);		// (VP_overlap : m1-m8 will be right)
+	vector<value> oneMetal_VP_overlap(string _MET_LAYER, string _CELL_NAME, string _PIN_NAME, box  _new_VP);		// (VP_overlap : m1-m8 will be right)
 	void make_PG_rtree_M3M4();
 
 private:
@@ -78,7 +78,7 @@ private:
 	map<string, layer*>_all_layer;
 	map<string, cell_type*>_all_cell_type_new;
 	//_all_cell_type A;
-	map<string, cell*>_all_cell;      //ä¸çŸ¥é“è¦ä¸è¦å»ºé€™å€‹ ç›®å‰é‚„ç”¨ä¸åˆ°
+	map<string, cell*>_all_cell;      //¤£ª¾¹D­n¤£­n«Ø³o­Ó ¥Ø«eÁÙ¥Î¤£¨ì
 	map<double, row*>_all_row;    //each row's  y(height)
 	//map<string, pin*>_pins_of_obs;
 

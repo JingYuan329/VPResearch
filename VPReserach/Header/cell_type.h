@@ -11,11 +11,16 @@ public:
 	string get_cell_type_name() { return _cell_type_name; };
 	double get_size() { return _size; };
 	double get_by() { return _by; };
+	pin* find_outpin() {
+		for (int i = 0; i < _all_pin.size(); ++i) {
+			if (_all_pin.at(i)->getdir() == "OUTPUT") return _all_pin.at(i);
+		}
+		return NULL;  };
 
 	vector<pin*>_all_pin;
-	vector<cell*>_this_type_all_cell;         //ç›®å‰ä¸éœ€è¦ä½¿ç”¨mapï¼Œä½†ä¸çŸ¥é“ä¹‹å¾Œæœƒä¸æœƒéœ€è¦
-	vector<pin*>_all_OBS;               // ä»¥å‰è£çœŸçš„obsï¼Œç¾åœ¨ç”¨ä¸åˆ°äº†
-	bool _has_insert_VP=0;              //default éƒ½æ˜¯æ²’æœ‰insert VPçš„cell type
+	vector<cell*>_this_type_all_cell;         //¥Ø«e¤£»İ­n¨Ï¥Îmap¡A¦ı¤£ª¾¹D¤§«á·|¤£·|»İ­n
+	vector<pin*>_all_OBS;               // ¥H«e¸Ë¯uªºobs¡A²{¦b¥Î¤£¨ì¤F
+	bool _has_insert_VP=0;              //default ³£¬O¨S¦³insert VPªºcell type
 
 private:
 	string _cell_type_name;
