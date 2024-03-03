@@ -937,9 +937,9 @@ void design::dodge_pin_VP(cell* which_cell)
 	_y_coordinate = which_cell->get_y() / _units;
 
 	vector<RECT> pre_vp,now_vp,_m2_base;
-	RECT _base_pin_rect, _temp_rect, _base_pin_rect2;
+	RECT _base_pin_rect;
 	vector<box> _M4_overlap_PG;
-	pre_vp.clear(), now_vp.clear();
+	vector<value> _Result;
 	char _M2VPbase_type;
 
 	double _spacing = 0.5;
@@ -949,62 +949,49 @@ void design::dodge_pin_VP(cell* which_cell)
 	if (output_pin != NULL) {
 		box b_cell_buffer(point( _x_coordinate-1,  _y_coordinate-1),
 			point(_x_coordinate+which_cell_type->get_size()+1 ,_y_coordinate+which_cell_type->get_by()+1 ));
-		which_cell->_buffer_overlap_m2VP = oneMetal_VP_overlap("rtMetal2", which_cell->get_cell_name(), "", b_cell_buffer);
-		which_cell->_buffer_overlap_m3PG = oneMetal_VP_overlap("rtMetal3", which_cell->get_cell_name(), "", b_cell_buffer);
-		which_cell->_buffer_overlap_m4PG = oneMetal_VP_overlap("rtMetal4", which_cell->get_cell_name(), "", b_cell_buffer);
+		which_cell->set_buffer_overlap_m2VP(oneMetal_VP_overlap("rtMetal2", which_cell->get_cell_name(), "", b_cell_buffer));
+		which_cell->set_buffer_overlap_m3PG (oneMetal_VP_overlap("rtMetal3", which_cell->get_cell_name(), "", b_cell_buffer),0.1);
+		which_cell->set_buffer_overlap_m4PG (oneMetal_VP_overlap("rtMetal4", which_cell->get_cell_name(), "", b_cell_buffer),0.1);
 
-
-		which_cell->reset_this_pin();
+		// which_cell->reset_this_pin();
+		which_cell->get_cell_type()->find_outpin()->_reset_all_RECT_access();
 
 		while (_m2_base.empty()) {                 // 如果沒有合法的M2第一根VP, 跑此while
 			_base_pin_rect = choose_base_pin_rect(which_cell_type, _M2_dir);                 //VP M2第一根 和 M2_dir方向一致
-			if (_base_pin_rect._access_flag == -1) {  //output pin 中沒有_M2_dir的RECT了 
+			if (_base_pin_rect.get_access_flag() == -1) {  //output pin 中沒有_M2_dir的RECT了 
 				_base_pin_rect = choose_base_pin_rect(which_cell_type, (_M2_dir == 1) ? 0 : 1);        //VP M2第一根 和 M2_dir方向不同
 			}
-			if (_base_pin_rect._access_flag == -1) {                      // 還是-1，代表所有rect都被找完了 
+			if (_base_pin_rect.get_access_flag() == -1) {                      // 還是-1，代表所有rect都被找完了 
 				//////////////////////////pre_vp 要 push_back()  一個和_M2_dir同方向的 pin base////////////////////////
+				_base_pin_rect=choose_specify_dir_pin_rect(which_cell_type, _M2_dir);
+				_m2_base.push_back(_base_pin_rect);
 				_M2VPbase_type = 'A';
 				break;
 			}
 			int flag_overlap_with_PG = 0;
 			if (_base_pin_rect.horizontal_or_straight() == _M2_dir) {              //VP M2第一根(base pin) 和 M2_dir方向一致
-				for (int i = 0; i < which_cell->_buffer_overlap_m3PG.size(); ++i) {                          // 看M2第一根pin有沒有和 上方任何PG重疊
-					if (boost::geometry::overlaps(_base_pin_rect.RECT2box(), which_cell->_buffer_overlap_m3PG.at(i).first) == 1) {		 //M3 PG
-						flag_overlap_with_PG = 1;
-						break;
-					}
-				}
-				for (int i = 0; i < which_cell->_buffer_overlap_m4PG.size(); ++i) {
-					if (boost::geometry::overlaps(_base_pin_rect.RECT2box(), which_cell->_buffer_overlap_m4PG.at(i).first) == 1) {           //M4 PG
-						flag_overlap_with_PG = 1;
-						break;
-					}
-				}
 
+					   // 看M2第一根pin有沒有和 上方任何PG重疊
+				flag_overlap_with_PG=check_overlap(_base_pin_rect.RECT2box(_x_coordinate, _y_coordinate), which_cell->get_buffer_overlap_m3PG(), _Result);     //M3 PG
+				flag_overlap_with_PG= check_overlap(_base_pin_rect.RECT2box(_x_coordinate, _y_coordinate), which_cell->get_buffer_overlap_m4PG(), _Result);     //M4 PG
 				if (flag_overlap_with_PG == 0) {                                //M2第一根VP沒有和上方PG重疊
 					_m2_base.push_back(_base_pin_rect);
 					_M2VPbase_type = 'A';
 				}
-
 			}
 			else {                            //VP M2 pin base 和 M2_dir方向不同
 				int flag_overlap_with_PG = 0;
 				// 看M2 pin base有沒有和 上方任何PG重疊
 				// M4 PG 就算有和_base_pin_rect 重疊也可選 ( M2 VP兩根 的走向和M4PG的相同)
-				for (int i = 0; i < which_cell->_buffer_overlap_m4PG.size(); ++i) {
-					if (bg::overlaps(_base_pin_rect.RECT2box(), which_cell->_buffer_overlap_m4PG.at(i).first) == 1) {           //M4 PG
-						_M4_overlap_PG.push_back(which_cell->_buffer_overlap_m4PG.at(i).first);
-						flag_overlap_with_PG = -1;
-						break;
+				_Result.clear();
+				if (check_overlap(_base_pin_rect.RECT2box(_x_coordinate, _y_coordinate), which_cell->get_buffer_overlap_m4PG(), _Result) == 1) {  //M4 PG
+					flag_overlap_with_PG = -1;
+					for (int i = 0; i < _Result.size(); ++i) {
+						_M4_overlap_PG.push_back(_Result.at(i).first);
 					}
 				}
-
-				for (int i = 0; i < which_cell->_buffer_overlap_m3PG.size(); ++i) {                          
-					if (bg::overlaps(_base_pin_rect.RECT2box(), which_cell->_buffer_overlap_m3PG.at(i).first) == 1) {		 //M3 PG
-						flag_overlap_with_PG = 1;
-						break;
-					}
-				}
+				
+				flag_overlap_with_PG = check_overlap(_base_pin_rect.RECT2box(_x_coordinate, _y_coordinate), which_cell->get_buffer_overlap_m3PG(), _Result);  //M3PG
 
 				if (flag_overlap_with_PG == 0) {                                //M2 pin base沒有和上方PG重疊
 					_m2_base.push_back(_base_pin_rect);
@@ -1017,66 +1004,153 @@ void design::dodge_pin_VP(cell* which_cell)
 
 			}                       //VP M2 pin base 和 M2_dir方向不同結束
 		}               //while (pre_vp.empty()
+		cout << __LINE__ <<"   END while (pre_vp.empty())"<< endl;
 
-
+		RECT _temp_rect, _temp_rect2;
 		//////有pin base了 要開始蓋VP了
 		if (_M2VPbase_type == 'A') {
-			pre_vp.push_back( _m2_base.at(0) );
+			pre_vp.push_back(_m2_base.at(0));                  //M2第一根
+			_temp_rect2 = _m2_base.at(0);                        //M2第二根=M2第一根，然後再開始shift
+
+			int _is_left = 0, _is_up = 0, _has_overlap_V = 0, _has_overlap_H = 0;
+
+			if (_m2_base.at(0).horizontal_or_straight() == 1) {              //M2第一根 is V
+				if (_m2_base.at(0).Point(1, 'x') - _spacing < (0 + 0.15)) {			//往右一步打M2第二根
+					_temp_rect2.Shift(_spacing, 0);
+					_is_left = 0;
+				}
+				else {                                   //往左一步打M2第二根   (大部分都長這樣)
+					_temp_rect2.Shift(-1 * _spacing, 0);
+					_is_left = 1;
+				}
+
+				_Result.clear();
+				if (check_overlap(_temp_rect2.RECT2box(_x_coordinate, _y_coordinate), which_cell->get_buffer_overlap_m4PG(), _Result)) {    //M2第二根和M4PG check overlap
+					if (_is_left == 0) {
+						_temp_rect2.Shift(-2 * _spacing, 0);
+						_is_left = 1;
+					}
+					else {     //_is_left==1
+						_temp_rect2.Shift(2 * _spacing, 0);
+						_is_left = 0;
+					}
+				}
+
+
+				////////////////_temp_rect2跟M1 pin比較看有沒有overlap
+				for (int i = 0; i < which_cell_type->_all_pin.size(); ++i) {
+					if (which_cell_type->_all_pin.at(i) != which_cell_type->find_outpin()) {
+						for (int j = 0; j < which_cell_type->_all_pin.at(i)->Get_rect_size(); ++j) {
+							_has_overlap_V = bg::intersects(_temp_rect2.RECT2box(), which_cell_type->_all_pin.at(i)->Get_rect().at(j).RECT2box());
+							if (_has_overlap_V == 1)   break;
+						}
+						if (_has_overlap_V == 1)   break;
+					}
+				}
+
+				if (_has_overlap_V) {              //has overlap
+					if (_is_left == 0) {
+						_temp_rect2.Shift(0.13, 0);
+					}
+					else {          //_is_left==1
+						_temp_rect2.Shift(-0.13, 0);
+					}
+				}
+
+			pre_vp.push_back(_temp_rect2);
+				
+			}    //M2第一根 is V   finish
+			else {                   //M2第一根 is H  
+
+				if (_m2_base.at(0).Point(1, 'y') - _spacing <0) {			//往下一步打M2第二根  (打出cell下界)
+					_temp_rect2.Shift(0, -1*_spacing);
+					_is_up = 0;
+				}
+				else {                                   //往上一步打M2第二根   (打出cell上界)
+					_temp_rect2.Shift(0,1 * _spacing);
+					_is_up = 1;
+				}
+
+				_Result.clear();
+				if (check_overlap(_temp_rect2.RECT2box(_x_coordinate, _y_coordinate), which_cell->get_buffer_overlap_m4PG(), _Result)) {    //M2第二根和M4PG check overlap
+					if (_is_up == 0) {
+						_temp_rect2.Shift(0, 2 * _spacing);
+						_is_up = 1;
+					}
+					else {     //_is_up==1
+						_temp_rect2.Shift(0, -2 * _spacing);
+						_is_up = 0;
+					}
+				}
+
+
+				////////////////_temp_rect2應該要跟M2 VP比較看有沒有overlap， 但是還想不到如果有overlap的話要怎麼移動或改動
+			/*	for (int i = 0; i < which_cell_type->_all_pin.size(); ++i) {
+					if (which_cell_type->_all_pin.at(i) != which_cell_type->find_outpin()) {
+						for (int j = 0; j < which_cell_type->_all_pin.at(i)->Get_rect_size(); ++j) {
+							_has_overlap_V = bg::overlaps(_temp_rect2.RECT2box(), which_cell_type->_all_pin.at(i)->Get_rect().at(j).RECT2box());
+							if (_has_overlap_V == 1)   break;
+						}
+						if (_has_overlap_V == 1)   break;
+					}
+				}*/
+
+				//if (_has_overlap_H) {              //has overlap
+				//	if (_is_up == 0) {
+				//		_temp_rect2.Shift(0.13, 0);
+				//	}
+				//	else {          //_is_left==1
+				//		_temp_rect2.Shift(-0.13, 0);
+				//	}
+				//}
+
+				pre_vp.push_back(_temp_rect2);
+			}        //M2第一根 is H  finish
+
 		}
 		else if (_M2VPbase_type == 'B') {
-			RECT _temp_rect, _temp_rect2;
 			vector<box>OverlapPG = _M4_overlap_PG;
 			vector<RECT> base = _m2_base;
 
 			if (_m2_base.at(0).horizontal_or_straight() == 0) { // base pin is H
-				// Rotate 90
+			 // Rotate 90
 				OverlapPG.clear();
 				for (int i = 0; i < OverlapPG.size(); ++i) {
 					OverlapPG.push_back(
 						box(
-							point(_M4_overlap_PG.at(i).min_corner().get < 1 >(), _M4_overlap_PG.at(i).min_corner().get < 0 >()) ,
+							point(_M4_overlap_PG.at(i).min_corner().get < 1 >(), _M4_overlap_PG.at(i).min_corner().get < 0 >()),
 							point(_M4_overlap_PG.at(i).max_corner().get < 1 >(), _M4_overlap_PG.at(i).max_corner().get < 0 >())
 						)
 					);
 				}
-				base.at(0).Point(1, 'x') = _m2_base.at(0).Point(1, 'y');
+
+				base.at(0).Point(1, 'x') = _m2_base.at(0).Point(1, 'y');                     //x y 顛倒
 				base.at(0).Point(1, 'y') = _m2_base.at(0).Point(1, 'x');
 				base.at(0).Point(2, 'x') = _m2_base.at(0).Point(2, 'y');
 				base.at(0).Point(2, 'y') = _m2_base.at(0).Point(2, 'x');
-			}    	
+
+			}
 
 
-			double _m4PG_min_y = 1000000, _m4PG_max_y=0;
+			double _m4PG_min_y = 1000000, _m4PG_max_y = 0;
 			for (int i = 0; i < OverlapPG.size(); ++i) {
 				if (OverlapPG.at(i).min_corner().get<1>() < _m4PG_min_y)   _m4PG_min_y = OverlapPG.at(i).min_corner().get<1>();
 				if (OverlapPG.at(i).max_corner().get<1>() > _m4PG_max_y)    _m4PG_max_y = OverlapPG.at(i).max_corner().get<1>();
 			}
 
-			if (base.at(0).Point(1, 'y')  >= _m4PG_min_y) {               //case B_1
-				_temp_rect.Point(1, 'x') = base.at(0).Point(1, 'x') - 0.25;                //M2第一根
-				_temp_rect.Point(1, 'y') = _m4PG_max_y + 0.1;
-				_temp_rect.Point(2, 'x') = base.at(0).Point(1, 'x') + 0.25;
-				_temp_rect.Point(2, 'y') = _m4PG_max_y + 0.1+0.08;
-
-				_temp_rect2.Point(1, 'x') = _temp_rect.Point(1, 'x');                //M2第二根
-				_temp_rect2.Point(1, 'y') = _temp_rect.Point(1, 'y')+0.5;
-				_temp_rect2.Point(2, 'x') = _temp_rect.Point(2, 'x');
-				_temp_rect2.Point(2, 'y') = _temp_rect.Point(2, 'y')+0.5;
+			if (base.at(0).Point(1, 'y') >= _m4PG_min_y) {               //case B_1
+				_temp_rect = RECT( point (base.at(0).Point(1, 'x') - _spacing / 2, _m4PG_max_y + 0.1), _spacing, 0.08);    //M2第一根
+				_temp_rect2 = _temp_rect;
+				_temp_rect2.Shift(0, _spacing);     //M2第二根
 			}
 			else if (base.at(0).Point(2, 'y') <= _m4PG_min_y) {              //case B_2
-				_temp_rect.Point(1, 'x') = base.at(0).Point(1, 'x') - 0.25;                //M2第一根
-				_temp_rect.Point(1, 'y') = _m4PG_min_y - 0.1 - 0.08;
-				_temp_rect.Point(2, 'x') = base.at(0).Point(1, 'x') + 0.25;
-				_temp_rect.Point(2, 'y') = _m4PG_min_y - 0.1;
-
-				_temp_rect2.Point(1, 'x') = _temp_rect.Point(1, 'x');                //M2第二根
-				_temp_rect2.Point(1, 'y') = _temp_rect.Point(1, 'y') - 0.5;
-				_temp_rect2.Point(2, 'x') = _temp_rect.Point(2, 'x');
-				_temp_rect2.Point(2, 'y') = _temp_rect.Point(2, 'y') - 0.5;
+				_temp_rect = RECT(point(base.at(0).Point(1, 'x') - _spacing / 2, _m4PG_min_y - 0.1 - 0.08), _spacing, 0.08);    //M2第一根
+				_temp_rect2 = _temp_rect;
+				_temp_rect2.Shift(0, -1 * _spacing); //M2第二根
 			}
 			else {                                                 //case B_3
-
-
+				_temp_rect = RECT(point(base.at(0).Point(1, 'x') - _spacing / 2, _m4PG_max_y + 0.1), _spacing,0.08);   //M2第一根
+				_temp_rect2 = RECT(point(base.at(0).Point(1, 'x') - _spacing / 2, _m4PG_min_y - 0.1 - 0.08), _spacing, 0.08);   //M2第二根
 			}
 
 			if (_m2_base.at(0).horizontal_or_straight() == 0) { // base pin is H
@@ -1091,125 +1165,52 @@ void design::dodge_pin_VP(cell* which_cell)
 				_temp_rect2.Point(1, 'y') = _temp_rect3.Point(1, 'x');
 				_temp_rect2.Point(2, 'x') = _temp_rect3.Point(2, 'y');
 				_temp_rect2.Point(2, 'y') = _temp_rect3.Point(2, 'x');
-			}    	// Rotate -90
+			}     // Rotate -90
 
-
-
+				pre_vp.push_back(_temp_rect);
+			     pre_vp.push_back(_temp_rect2);
 		}
 		else if (_M2VPbase_type == 'C') {
+			if (_m2_base.at(0).horizontal_or_straight() == 0) { // base pin is H
+				_temp_rect = RECT(point((_m2_base.at(0).Point(1, 'x') + _m2_base.at(0).Point(2, 'x')) / 2, _m2_base.at(0).Point(2, 'y') - _spacing / 2), 0.08, _spacing);            //M2第一根  (middle)
+				_Result.clear();
+				check_overlap(_temp_rect.RECT2box(_x_coordinate,_y_coordinate), which_cell->get_buffer_overlap_m2VP(),_Result);    //check M2第一根有沒有和  M2VP, M3PG重疊
+				check_overlap(_temp_rect.RECT2box(_x_coordinate, _y_coordinate), which_cell->get_buffer_overlap_m3PG(), _Result);    //check M2第一根有沒有和  M2VP, M3PG重疊
+			       
+				_temp_rect2 = _temp_rect;
+				_temp_rect2.Shift( _spacing, 0);
 
-	}
 
+			}
+			else {           // base pin is V
+				_temp_rect = RECT(point(_m2_base.at(0).Point(2, 'x') - _spacing / 2, _m2_base.at(0).Point(1, 'y') + 0.15) , _spacing, 0.08);      //M2第一根  (down)
 
+				_temp_rect2 = _temp_rect;
+				_temp_rect2.Shift(0,_spacing);
+			}
 
+			pre_vp.push_back(_temp_rect);
+			pre_vp.push_back(_temp_rect2);
 
+	}  //_M2VPbase_type=='C'  finish
 
-
-
+	     //pre_vp.at(0),  pre_vp.at(1) 是做好的M2 2根VP  ，要加入M2rTree
+	     add_rtree("Metal2", which_cell->get_cell_name(), output_pin->getname(), pre_vp.at(0).RECT2box(_x_coordinate, _y_coordinate));
+	     add_rtree("Metal2", which_cell->get_cell_name(), output_pin->getname(), pre_vp.at(1).RECT2box(_x_coordinate, _y_coordinate));
+		
 
 		
-		
-
-		_base_pin_rect = pre_vp.at(0);
-		cout << "this_cell_type's width : " << which_cell_type->get_size() << endl;
-		int _left = -1;
-		if (_base_pin_rect.horizontal_or_straight() == 1) {            //metal2 第一根是直的
-			if (_base_pin_rect.Point(1, 'x') - _spacing < (0 + 0.15)) {			//往右一步
-				_temp_rect.Point(1, 'x') = _base_pin_rect.Point(1, 'x') + _spacing;
-				_temp_rect.Point(1, 'y') = _base_pin_rect.Point(1, 'y');
-				_temp_rect.Point(2, 'x') = _base_pin_rect.Point(2, 'x') + _spacing;
-				_temp_rect.Point(2, 'y') = _base_pin_rect.Point(2, 'y');
-				_left = 0;
-			}
-			else {
-				_temp_rect.Point(1, 'x') = _base_pin_rect.Point(1, 'x') - _spacing;                                       //往左一步  (大部分都長這樣)
-				_temp_rect.Point(1, 'y') = _base_pin_rect.Point(1, 'y');
-				_temp_rect.Point(2, 'x') = _base_pin_rect.Point(2, 'x') - _spacing;
-				_temp_rect.Point(2, 'y') = _base_pin_rect.Point(2, 'y');
-				_left = 1;
-			}
-		}
-		else {                   //metal2 第一根是恆的  (_base_pin_rect)  :  每根直的VP都是寬0.08長0.8，每層的兩根VP間格: >=0.5
-			
-				_temp_rect.Point(1, 'x') = _base_pin_rect.Point(1, 'x')+0.2;
-				_temp_rect.Point(1, 'y') = (_base_pin_rect.Point(1, 'y') + _base_pin_rect.Point(2, 'y'))/2  -0.4 ;
-				_temp_rect.Point(2, 'x') = _temp_rect.Point(1, 'x') + 0.08;
-				_temp_rect.Point(2, 'y') = (_base_pin_rect.Point(1, 'y') + _base_pin_rect.Point(2, 'y')) / 2 + 0.4;
-
-				pre_vp.clear();
-				pre_vp.push_back(_temp_rect);
-
-				//metal2 第二根
-				_temp_rect.Point(1, 'x') += 0.5;
-				_temp_rect.Point(1, 'y') ;
-				_temp_rect.Point(2, 'x') += 0.5;
-				_temp_rect.Point(2, 'y'); 
-
-		}
-
-		/* if (_out_pin->get_RECT().at(_which_pin).first.first - _spacing < (0 + 0.15)) {			//往右一步
-			_temp_rect.first.first = _out_pin->get_RECT().at(_which_pin).first.first - _spacing;
-			_temp_rect.first.second = _out_pin->get_RECT().at(_which_pin).first.second;
-			_temp_rect.second.first = _out_pin->get_RECT().at(_which_pin).second.first - _spacing;
-			_temp_rect.second.second = _out_pin->get_RECT().at(_which_pin).second.second;
-		}
-		else {
-			_temp_rect.first.first = _out_pin->get_RECT().at(_which_pin).first.first + _spacing;                                       //往左一步  (大部分都長這樣)
-			_temp_rect.first.second = _out_pin->get_RECT().at(_which_pin).first.second;
-			_temp_rect.second.first = _out_pin->get_RECT().at(_which_pin).second.first + _spacing;
-			_temp_rect.second.second = _out_pin->get_RECT().at(_which_pin).second.second;
-		}*/
-
-		////////////////////////////// check   oneMetal_VP_overlap
-		box b_2_2(point(_temp_rect.Point(1, 'x') + _x_coordinate, _temp_rect.Point(1, 'y') + _y_coordinate),
-			point(_temp_rect.Point(2, 'x') + _x_coordinate, _temp_rect.Point(2, 'y') + _y_coordinate));
-		if (oneMetal_VP_overlap("Metal2", which_cell->get_cell_name(), output_pin->getname(), b_2_2) == false) {
-			pre_vp.push_back(_temp_rect);                     //metal2 第二根
-		}
-		else {
-			if (_temp_rect.horizontal_or_straight() == 1) {         //metal2打上去的這兩根都是直的
-				if (_left == 1) {			//往左一步
-					_temp_rect.Point(1, 'x') -= 0.13;
-					_temp_rect.Point(1, 'y');
-					_temp_rect.Point(2, 'x') -= 0.13;
-					_temp_rect.Point(2, 'y');
-				}
-				else if (_left == 0) {			//往右一步
-					_temp_rect.Point(1, 'x') += 0.13;
-					_temp_rect.Point(1, 'y');
-					_temp_rect.Point(2, 'x') += 0.13;
-					_temp_rect.Point(2, 'y');
-				}
-			}
-			else {													//metal2打上去的這兩根都是橫的
-				;
-			}
-			pre_vp.push_back(_temp_rect);                     //metal2 第二根
-		}
 		////////////////////////////接著metal3////////////////////////////
 
-		//for (int i = 0; i < output_pin->Get_rect_size(); ++i) {				//_out_pin的_RECT全部給_obs
-		//	output_pin->_obs.push_back(output_pin->Get_rect().at(i));
-		//	output_pin->_obs_layer.push_back(output_pin->getlayer().at(i));
-		//}
-		//output_pin->Clear_rect();
-
 		auto iter = _all_layer.find(output_pin->getlayer().at(0));			//metal1
-		/*output_pin->_clear_layer();*/
 		iter++;			//metal2
 		each_dir = (base_dir == 1) ? 0 : 1;				//下一層走向更新 (metal2)
-
-		//output_pin->_obs.insert(output_pin->_obs.end(), pre_vp.begin(), pre_vp.end());
-		//output_pin->_obs_layer.push_back(iter->first);       // 兩根新加入的obs所在的metal layer
-		//output_pin->_obs_layer.push_back(iter->first);       // 兩根新加入的obs所在的metal layer
 		which_cell->_VP.insert(which_cell->_VP.end(), pre_vp.begin(), pre_vp.end());
 		which_cell->_VP_layer.push_back(iter->first);
 		which_cell->_VP_layer.push_back(iter->first);
 		////////////////////////////接著metal3////////////////////////////
 		iter++;			//metal3
 		each_dir = (each_dir == 1) ? 0 : 1;				//下一層走向更新 (metal3)
-
-
 		now_vp = BuildVP(each_dir, pre_vp, iter->second->get_width(), 3);    //metal3 特別處理
 		which_cell->_VP.insert(which_cell->_VP.end(), now_vp.begin(), now_vp.end());
 		which_cell->_VP_layer.push_back(iter->first);       // 三根新加入的VP所在的metal layer
@@ -1231,7 +1232,6 @@ void design::dodge_pin_VP(cell* which_cell)
 			now_vp.clear();
 			each_dir = (each_dir == 1) ? 0 : 1;		//下一層走向更新
 		}
-		//now_VP+= _all_cell_type_new[which_cell_type]->_this_type_all_cell.size();
 		now_vp = BuildVP(each_dir, pre_vp, iter->second->get_width(), 2);		//最後一根 : 倒數第二層
 		which_cell->_VP.push_back(now_vp.at(0));
 		which_cell->_VP_layer.push_back(iter->first);
@@ -1250,11 +1250,35 @@ RECT design::choose_base_pin_rect(cell_type* which_cell_type, int _M2_dir)      
 	}
 	else {                 //output pin =NULL  ( nearly impossible)
 		RECT trect;
-		trect._access_flag = -1;
+		trect.set_access_flag(-1);
 		return trect;
 	}
+}
 
+RECT design::choose_specify_dir_pin_rect(cell_type* which_cell_type, int _dir)       // find out outpin's d_dir rect
+{
+	pin* out_pin;
+	out_pin = which_cell_type->find_outpin();
+	if (out_pin != NULL) {
+		for (int i = 0; i < out_pin->Get_rect_size(); ++i) {
+			if (out_pin->Get_rect().at(i).horizontal_or_straight() == _dir) {
+				return out_pin->Get_rect().at(i);
+			}
+		}
+	}
+	else  return RECT(0, 0, 0, 0);
 	
+}
+
+bool design::check_overlap(box range, vector<value> check_array,vector<value>&_result)
+{
+	for (int i = 0; i < check_array.size(); ++i) {
+		if (bg::intersects(range, check_array.at(i).first) == 1) {
+			_result.push_back(check_array.at(i));
+		}
+	}
+	if(_result.empty())  return false;
+	else      			return true;
 }
 
 
@@ -1804,7 +1828,6 @@ void design::make_rtree_M1()
 	cout << "finish make_rtree_M1 " << endl;
 }
 
-/////////////////////////////////////傳進來的box: _new_VP要加上cell _x_coordinate, _y_coordinate的
 vector<value> design::oneMetal_VP_overlap(string _rTree_index, string _CELL_NAME, string _PIN_NAME, box  _new_VP)
 {
 	cout << "start box with " << _rTree_index<<" overlap "<< endl;
@@ -1862,4 +1885,11 @@ void design::make_PG_rtree_M3M4()
 	cout << "end make_PG_rtree_M3M4 " << endl;
 	rTree* RTREE_M2 = new rTree;
 	forest.insert({ "rtMetal2", RTREE_M2 });
+}
+
+void design::add_rtree(string _Metal, string _CELL_NAME, string _PIN_NAME,box _new_rect)
+{
+	rTree_value.push_back(make_pair(_CELL_NAME, _PIN_NAME));
+	int _rTree_value_index = rTree_value.size() - 1;
+	forest["rt" + _Metal]->insert(make_pair(_new_rect, _rTree_value_index));
 }

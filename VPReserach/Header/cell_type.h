@@ -15,7 +15,8 @@ public:
 		for (int i = 0; i < _all_pin.size(); ++i) {
 			if (_all_pin.at(i)->getdir() == "OUTPUT") return _all_pin.at(i);
 		}
-		return NULL;  };
+		return NULL; 
+	};
 
 	vector<pin*>_all_pin;
 	vector<cell*>_this_type_all_cell;         //目前不需要使用map，但不知道之後會不會需要

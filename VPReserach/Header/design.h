@@ -7,6 +7,7 @@
 #include<utility>
 #include <iomanip>
 #include<fstream>
+#include <deque>
 
 #include <boost/geometry.hpp>
 #include <boost/geometry/index/rtree.hpp>
@@ -14,6 +15,8 @@
 #include <boost/geometry/geometries/point.hpp>
 #include <boost/geometry/geometries/box.hpp>
 #include <boost/geometry/algorithms/overlaps.hpp>
+#include <boost/geometry/geometries/polygon.hpp>
+
 
 using namespace std;
 
@@ -23,7 +26,8 @@ namespace bgi = boost::geometry::index;
 typedef bg::model::point<float, 2, bg::cs::cartesian> point;
 typedef bg::model::box<point> box;
 typedef std::pair<box, unsigned> value;
-typedef bgi::rtree< value, bgi::quadratic<150000>> rTree;
+typedef bgi::rtree< value, bgi::quadratic<16>> rTree;
+typedef bg::model::polygon<point> polygon;
 //typedef std::pair<box, unsigned> value;
 
 class design {
@@ -42,6 +46,8 @@ public:
 	void dodge_pin_VP( cell* which_cell);
 	void insert_dodge_VP(double percent);
 	RECT choose_base_pin_rect(cell_type* which_cell_type,int _M2_dir);
+	RECT choose_specify_dir_pin_rect(cell_type* which_cell_type, int _dir);
+	bool check_overlap(box range, vector<value>check_array, vector<value>&_result);
 
 	
 	void offset(vector<pair<pair<double, double>, pair<double, double>>>& _now_vp, double _bias, double _low_bound, double _up_bound);
@@ -64,6 +70,7 @@ public:
 	void make_rtree_M1();
 	vector<value> oneMetal_VP_overlap(string _MET_LAYER, string _CELL_NAME, string _PIN_NAME, box  _new_VP);		// (VP_overlap : m1-m8 will be right)
 	void make_PG_rtree_M3M4();
+	void add_rtree(string _Metal, string _CELL_NAME, string _PIN_NAME,box _new_rect);
 
 private:
 	double _units=0;

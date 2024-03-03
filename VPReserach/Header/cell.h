@@ -25,8 +25,6 @@ public:
 	cell(string NAME1, string NAME2, string _X,string _Y,string _ORIENT,string _PLACED_OR_FIXED) :
 		_cell_type_name(NAME1), _cell_name(NAME2), _x(stod(_X)), _y(stod(_Y)), _orient(_ORIENT), _placed_or_fixed(_PLACED_OR_FIXED){}
 
-	friend class design;
-
 	string get_cell_type_name() { return _cell_type_name; };
 	string get_cell_name() { return _cell_name; };
 	double get_x() { return _x; };
@@ -42,9 +40,36 @@ public:
 	void set_cell_type(cell_type* CT) { ct = CT; };
 
 	void reset_this_pin() {
-		if (get_cell_type()->find_outpin() != NULL) {
-			get_cell_type()->find_outpin()->_reset_all_RECT_access();
+		//ct->find_outpin();
+		//get_cell_type();
+		//get_cell_type()->find_outpin();
+		//if (get_cell_type()->find_outpin() != NULL) {
+		//	get_cell_type()->find_outpin()->_reset_all_RECT_access();
+		//}
+	};
+
+
+	vector<value>& get_buffer_overlap_m2VP() { return _buffer_overlap_m2VP; };
+	vector<value>& get_buffer_overlap_m3PG() { return _buffer_overlap_m3PG; };
+	vector<value>& get_buffer_overlap_m4PG() { return _buffer_overlap_m4PG; };
+	void set_buffer_overlap_m2VP(vector<value> _m2VP) { _buffer_overlap_m2VP =_m2VP; };
+	void set_buffer_overlap_m3PG(vector<value> _m3PG, double _buffer) {
+		for (int i = 0; i < _m3PG.size(); ++i) {
+			_m3PG.at(i).first.min_corner().set < 0 >(_m3PG.at(i).first.min_corner().get < 0 >() - _buffer);
+			_m3PG.at(i).first.min_corner().set < 1 >(_m3PG.at(i).first.min_corner().get < 1 >() - _buffer);
+			_m3PG.at(i).first.max_corner().set < 0 >(_m3PG.at(i).first.max_corner().get < 0 >()+ _buffer);
+			_m3PG.at(i).first.max_corner().set < 1 >(_m3PG.at(i).first.max_corner().get < 1 >() + _buffer);
 		}
+		_buffer_overlap_m3PG =_m3PG;
+	};
+	void set_buffer_overlap_m4PG(vector<value> _m4PG, double _buffer) {
+		for (int i = 0; i < _m4PG.size(); ++i) {
+			_m4PG.at(i).first.min_corner().set < 0 >(_m4PG.at(i).first.min_corner().get < 0 >() - _buffer);
+			_m4PG.at(i).first.min_corner().set < 1 >(_m4PG.at(i).first.min_corner().get < 1 >() - _buffer);
+			_m4PG.at(i).first.max_corner().set < 0 >(_m4PG.at(i).first.max_corner().get < 0 >() + _buffer);
+			_m4PG.at(i).first.max_corner().set < 1 >(_m4PG.at(i).first.max_corner().get < 1 >() + _buffer);
+		}
+		_buffer_overlap_m4PG = _m4PG;
 	};
 
 
@@ -54,20 +79,11 @@ public:
 	pair<cell*, double> _left_cell;          //double: ¶ZÂ÷¦h»·
 	pair<cell*, double> _right_cell;
 	////////////////////////////////////////////
-
-	//vector<pin*> get_pins() {
-	//	
-	//};
-
 	
 	vector<RECT>_VP;
 	vector<string>_VP_layer;
 	string _new_cell_type_name="";
 	string _VP_pin_name = "";
-
-	vector<value> _buffer_overlap_m2VP;
-	vector<value> _buffer_overlap_m3PG;
-	vector<value> _buffer_overlap_m4PG;
 
 private:
 	string _cell_type_name;
@@ -78,6 +94,9 @@ private:
 	string _placed_or_fixed;
 	string _parent;
 	string _which_row;
+	vector<value> _buffer_overlap_m2VP;
+	vector<value> _buffer_overlap_m3PG;
+	vector<value> _buffer_overlap_m4PG;
 
 	cell_type* ct;
 };

@@ -2,11 +2,49 @@
 #include<iostream>
 #include<vector>
 #include<string>
+#include <boost/geometry.hpp>
+#include <boost/geometry/geometries/point.hpp>
+#include <boost/geometry/geometries/box.hpp>
+
+namespace bg = boost::geometry;
+namespace bgi = boost::geometry::index;
+typedef bg::model::point<float, 2, bg::cs::cartesian> point;
+typedef bg::model::box<point> box;
+
+
 using namespace std;
 
 class RECT {
 
 public:
+	RECT(point LD,double w,double h) {
+		Point(1, 'x')= LD.get<0>();
+		Point(1, 'y')= LD.get<1>();
+		Point(2, 'x') = LD.get<0>() + w;
+		Point(2, 'y')= LD.get<1>() + h;
+	};
+	RECT(point LD, point RU) {
+		Point(1, 'x') = LD.get<0>();
+		Point(1, 'y') = LD.get<1>();
+		Point(2, 'x') = RU.get<0>();
+		Point(2, 'y') = RU.get<1>();
+	};
+	RECT(double LD_x, double LD_y, double RU_x, double RU_y) {
+		Point(1, 'x') = LD_x;
+		Point(1, 'y') = LD_y;
+		Point(2, 'x') = RU_x;
+		Point(2, 'y') = RU_y;
+	};
+	RECT() {
+		_RECT_ = make_pair(make_pair(0, 0), make_pair(0, 0));
+	};
+	void Shift(double _x_dir, double _y_dir) {
+		Point(1, 'x') += _x_dir;
+		Point(1, 'y') += _y_dir;
+		Point(2, 'x') += _x_dir;
+		Point(2, 'y') += _y_dir;
+	};
+
 	double & Point(int _p, char _X_or_Y) {
 		if (_p == 1) {
 			if (_X_or_Y == 'x') return _RECT_.first.first;
@@ -34,19 +72,22 @@ public:
 	box RECT2box() {
 		return box(point(Point(1, 'x'), Point(1, 'y')), point(Point(2, 'x'), Point(2, 'y')));
 	};
-
-	int _access_flag = 0;
+	box RECT2box(double _X, double _Y) {
+		return box(point(Point(1, 'x')+_X, Point(1, 'y')+ _Y), point(Point(2, 'x')+ _X, Point(2, 'y')+ _Y));
+	};
+	void set_access_flag(int x) { _access_flag = x;};
+	int get_access_flag() {	return _access_flag;};
+	
 	//get_point(2, x) = 200.200;
 private:
 	pair<pair<double, double>, pair<double, double>>_RECT_;
-
+	int _access_flag = 0;
 };
 
 
 
 class pin_shape 
 {
-
 public:
 	// like  0.000 -0.040 1.440 0.040 ;
 	double get_rect_point(string _Min_or_Max, char _X_or_Y) {
@@ -70,16 +111,12 @@ public:
 	};
 
 	void set_one_rect(string _rect1, string _rect2, string _rect3, string _rect4) {
-		RECT A;
-		A.Point(1, 'x') = stod(_rect1);
-		A.Point(1, 'y') = stod(_rect2);
-		A.Point(2, 'x') = stod(_rect3);
-		A.Point(2, 'y') = stod(_rect4);
+		RECT A(stod(_rect1), stod(_rect2), stod(_rect3), stod(_rect4));
 		_rect.push_back(A);
 	};
 	void set_rect(RECT _a_RECT) { _rect.push_back(_a_RECT); };
 	void clear_rect() { _rect.clear(); };
-	vector<RECT>get_rect() { return _rect; };
+	vector<RECT>& get_rect() { return _rect; };
 	int get_rect_size() { return _rect.size(); };
 	
 private:
@@ -112,28 +149,20 @@ public:
 	vector<RECT>Get_rect() { return _pin_shape.get_rect(); };
 	int Get_rect_size() { return _pin_shape.get_rect_size(); };
 	RECT find_rect(int _M2_dir) {
-			for (int i = 0; i < Get_rect_size(); ++i) {
-				if ((Get_rect().at(i).horizontal_or_straight()== _M2_dir)&& (Get_rect().at(i)._access_flag==0)){
-					Get_rect().at(i)._access_flag = 1;
-					return Get_rect().at(i);
-				}
+		for (int i = 0; i < Get_rect_size(); ++i) {
+			if ((_pin_shape.get_rect().at(i).horizontal_or_straight()== _M2_dir)&& (_pin_shape.get_rect().at(i).get_access_flag ()==0)){
+				_pin_shape.get_rect().at(i).set_access_flag(1);
+				return _pin_shape.get_rect().at(i);
 			}
-
-		/*	for (int i = 0; i < Get_rect_size(); ++i) {
-				if (Get_rect().at(i)._access_flag == 0) {
-					Get_rect().at(i)._access_flag = 1;
-					return Get_rect().at(i);
-				}
-			}*/
-				RECT trect;
-				trect._access_flag = -1;
-			return trect;
-
+		}
+		RECT trect;
+		trect.set_access_flag(-1);
+		return trect;
 	};
 
 	void _reset_all_RECT_access() {
 		for (int i = 0; i < Get_rect_size(); ++i) {
-			Get_rect().at(i)._access_flag = 0;
+			_pin_shape.get_rect().at(i).set_access_flag(0);
 		}
 	};
 
