@@ -992,7 +992,7 @@ void design::dodge_pin_VP(cell* which_cell)
 				// 看M2 pin base有沒有和 上方任何PG重疊
 				// M4 PG 就算有和_base_pin_rect 重疊也可選 ( M2 VP兩根 的走向和M4PG的相同)
 				for (int i = 0; i < which_cell->_buffer_overlap_m4PG.size(); ++i) {
-					if (boost::geometry::overlaps(_base_pin_rect.RECT2box(), which_cell->_buffer_overlap_m4PG.at(i).first) == 1) {           //M4 PG
+					if (bg::overlaps(_base_pin_rect.RECT2box(), which_cell->_buffer_overlap_m4PG.at(i).first) == 1) {           //M4 PG
 						_M4_overlap_PG.push_back(which_cell->_buffer_overlap_m4PG.at(i).first);
 						flag_overlap_with_PG = -1;
 						break;
@@ -1000,7 +1000,7 @@ void design::dodge_pin_VP(cell* which_cell)
 				}
 
 				for (int i = 0; i < which_cell->_buffer_overlap_m3PG.size(); ++i) {                          
-					if (boost::geometry::overlaps(_base_pin_rect.RECT2box(), which_cell->_buffer_overlap_m3PG.at(i).first) == 1) {		 //M3 PG
+					if (bg::overlaps(_base_pin_rect.RECT2box(), which_cell->_buffer_overlap_m3PG.at(i).first) == 1) {		 //M3 PG
 						flag_overlap_with_PG = 1;
 						break;
 					}
@@ -1021,47 +1021,79 @@ void design::dodge_pin_VP(cell* which_cell)
 
 		//////有pin base了 要開始蓋VP了
 		if (_M2VPbase_type == 'A') {
-			pre_vp.push_back(_m2_base.at(0));
+			pre_vp.push_back( _m2_base.at(0) );
 		}
 		else if (_M2VPbase_type == 'B') {
 			RECT _temp_rect, _temp_rect2;
-			if (_m2_base.at(0).horizontal_or_straight() == 1) {
-				double _m4PG_min_y = 1000000, _m4PG_max_y=0;
-				for (int i = 0; i < _M4_overlap_PG.size(); ++i) {
-					if (_M4_overlap_PG.at(i).min_corner().get<1>() < _m4PG_min_y)   _m4PG_min_y = _M4_overlap_PG.at(i).min_corner().get<1>();
-					if (_M4_overlap_PG.at(i).max_corner().get<1>() > _m4PG_max_y)    _m4PG_max_y = _M4_overlap_PG.at(i).max_corner().get<1>();
+			vector<box>OverlapPG = _M4_overlap_PG;
+			vector<RECT> base = _m2_base;
+
+			if (_m2_base.at(0).horizontal_or_straight() == 0) { // base pin is H
+				// Rotate 90
+				OverlapPG.clear();
+				for (int i = 0; i < OverlapPG.size(); ++i) {
+					OverlapPG.push_back(
+						box(
+							point(_M4_overlap_PG.at(i).min_corner().get < 1 >(), _M4_overlap_PG.at(i).min_corner().get < 0 >()) ,
+							point(_M4_overlap_PG.at(i).max_corner().get < 1 >(), _M4_overlap_PG.at(i).max_corner().get < 0 >())
+						)
+					);
 				}
-
-				if (_m2_base.at(0).Point(1, 'y')  >= _m4PG_min_y) {               //case B_1
-					_temp_rect.Point(1, 'x') = _m2_base.at(0).Point(1, 'x') - 0.25;                //M2第一根
-					_temp_rect.Point(1, 'y') = _m4PG_max_y + 0.1;
-					_temp_rect.Point(2, 'x') = _m2_base.at(0).Point(1, 'x') + 0.25;
-					_temp_rect.Point(2, 'y') = _m4PG_max_y + 0.1+0.08;
-
-					_temp_rect2.Point(1, 'x') = _temp_rect.Point(1, 'x');                //M2第二根
-					_temp_rect2.Point(1, 'y') = _temp_rect.Point(1, 'y')+0.5;
-					_temp_rect2.Point(2, 'x') = _temp_rect.Point(2, 'x');
-					_temp_rect2.Point(2, 'y') = _temp_rect.Point(2, 'y')+0.5;
-				}
-				else if (_m2_base.at(0).Point(2, 'y') <= _m4PG_min_y) {              //case B_2
-					_temp_rect.Point(1, 'x') = _m2_base.at(0).Point(1, 'x') - 0.25;                //M2第一根
-					_temp_rect.Point(1, 'y') = _m4PG_min_y - 0.1 - 0.08;
-					_temp_rect.Point(2, 'x') = _m2_base.at(0).Point(1, 'x') + 0.25;
-					_temp_rect.Point(2, 'y') = _m4PG_min_y - 0.1;
-
-					_temp_rect2.Point(1, 'x') = _temp_rect.Point(1, 'x');                //M2第二根
-					_temp_rect2.Point(1, 'y') = _temp_rect.Point(1, 'y') - 0.5;
-					_temp_rect2.Point(2, 'x') = _temp_rect.Point(2, 'x');
-					_temp_rect2.Point(2, 'y') = _temp_rect.Point(2, 'y') - 0.5;
-				}
-				else {                                                 //case B_3
+				base.at(0).Point(1, 'x') = _m2_base.at(0).Point(1, 'y');
+				base.at(0).Point(1, 'y') = _m2_base.at(0).Point(1, 'x');
+				base.at(0).Point(2, 'x') = _m2_base.at(0).Point(2, 'y');
+				base.at(0).Point(2, 'y') = _m2_base.at(0).Point(2, 'x');
+			}    	
 
 
-				}
-			}                     //_m2_base.at(0).horizontal_or_straight() == 1    finish
-			else {               //_m2_base.at(0).horizontal_or_straight() == 0
+			double _m4PG_min_y = 1000000, _m4PG_max_y=0;
+			for (int i = 0; i < OverlapPG.size(); ++i) {
+				if (OverlapPG.at(i).min_corner().get<1>() < _m4PG_min_y)   _m4PG_min_y = OverlapPG.at(i).min_corner().get<1>();
+				if (OverlapPG.at(i).max_corner().get<1>() > _m4PG_max_y)    _m4PG_max_y = OverlapPG.at(i).max_corner().get<1>();
+			}
 
-			}                       //_m2_base.at(0).horizontal_or_straight() == 0    finish
+			if (base.at(0).Point(1, 'y')  >= _m4PG_min_y) {               //case B_1
+				_temp_rect.Point(1, 'x') = base.at(0).Point(1, 'x') - 0.25;                //M2第一根
+				_temp_rect.Point(1, 'y') = _m4PG_max_y + 0.1;
+				_temp_rect.Point(2, 'x') = base.at(0).Point(1, 'x') + 0.25;
+				_temp_rect.Point(2, 'y') = _m4PG_max_y + 0.1+0.08;
+
+				_temp_rect2.Point(1, 'x') = _temp_rect.Point(1, 'x');                //M2第二根
+				_temp_rect2.Point(1, 'y') = _temp_rect.Point(1, 'y')+0.5;
+				_temp_rect2.Point(2, 'x') = _temp_rect.Point(2, 'x');
+				_temp_rect2.Point(2, 'y') = _temp_rect.Point(2, 'y')+0.5;
+			}
+			else if (base.at(0).Point(2, 'y') <= _m4PG_min_y) {              //case B_2
+				_temp_rect.Point(1, 'x') = base.at(0).Point(1, 'x') - 0.25;                //M2第一根
+				_temp_rect.Point(1, 'y') = _m4PG_min_y - 0.1 - 0.08;
+				_temp_rect.Point(2, 'x') = base.at(0).Point(1, 'x') + 0.25;
+				_temp_rect.Point(2, 'y') = _m4PG_min_y - 0.1;
+
+				_temp_rect2.Point(1, 'x') = _temp_rect.Point(1, 'x');                //M2第二根
+				_temp_rect2.Point(1, 'y') = _temp_rect.Point(1, 'y') - 0.5;
+				_temp_rect2.Point(2, 'x') = _temp_rect.Point(2, 'x');
+				_temp_rect2.Point(2, 'y') = _temp_rect.Point(2, 'y') - 0.5;
+			}
+			else {                                                 //case B_3
+
+
+			}
+
+			if (_m2_base.at(0).horizontal_or_straight() == 0) { // base pin is H
+				RECT _temp_rect3 = _temp_rect;
+				_temp_rect.Point(1, 'x') = _temp_rect3.Point(1, 'y');
+				_temp_rect.Point(1, 'y') = _temp_rect3.Point(1, 'x');
+				_temp_rect.Point(2, 'x') = _temp_rect3.Point(2, 'y');
+				_temp_rect.Point(2, 'y') = _temp_rect3.Point(2, 'x');
+
+				_temp_rect3 = _temp_rect2;
+				_temp_rect2.Point(1, 'x') = _temp_rect3.Point(1, 'y');
+				_temp_rect2.Point(1, 'y') = _temp_rect3.Point(1, 'x');
+				_temp_rect2.Point(2, 'x') = _temp_rect3.Point(2, 'y');
+				_temp_rect2.Point(2, 'y') = _temp_rect3.Point(2, 'x');
+			}    	// Rotate -90
+
+
 
 		}
 		else if (_M2VPbase_type == 'C') {
