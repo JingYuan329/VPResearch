@@ -53,6 +53,8 @@ public:
 	vector<value>& get_buffer_overlap_m3PG() { return _buffer_overlap_m3PG; };
 	vector<value>& get_buffer_overlap_m4PG() { return _buffer_overlap_m4PG; };
 	void set_buffer_overlap_m2VP(vector<value> _m2VP) { _buffer_overlap_m2VP =_m2VP; };
+	void set_buffer_overlap_m3PG(vector<value> _m3PG) { _buffer_overlap_m3PG= _m3PG; };
+	void set_buffer_overlap_m4PG(vector<value> _m4PG) { _buffer_overlap_m4PG = _m4PG; };
 	void set_buffer_overlap_m3PG(vector<value> _m3PG, double _buffer) {
 		for (int i = 0; i < _m3PG.size(); ++i) {
 			_m3PG.at(i).first.min_corner().set < 0 >(_m3PG.at(i).first.min_corner().get < 0 >() - _buffer);

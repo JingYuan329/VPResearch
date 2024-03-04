@@ -900,12 +900,11 @@ void design::insert_dodge_VP(double percent)
 	for (const auto &s : _all_cell_type_new) {
 		if (now_insert_VP_num < target_VP_num) {
 			if (  (s.second->get_size() < 2) && (s.second->get_size() >0.9) && (s.second->find_outpin() != NULL)) {                     
-				cout << __LINE__ << endl;
 				s.second->_has_insert_VP = 1;                                     // 這個種類的cell type 打了VP: _has_insert_VP=1
 				for (int i = 0; i < s.second->_this_type_all_cell.size(); ++i) {
-					cout << __LINE__ << endl;
+                              
 				      dodge_pin_VP(s.second->_this_type_all_cell.at(i));
-					cout << __LINE__ << endl;
+
 					s.second->_this_type_all_cell.at(i)->_new_cell_type_name = s.first + "_" + to_string(i);
 					s.second->_this_type_all_cell.at(i)->_VP_pin_name = "t"+s.second->find_outpin()->getname();
 				}
@@ -953,7 +952,6 @@ void design::dodge_pin_VP(cell* which_cell)
 		which_cell->set_buffer_overlap_m3PG (oneMetal_VP_overlap("rtMetal3", which_cell->get_cell_name(), "", b_cell_buffer),0.1);
 		which_cell->set_buffer_overlap_m4PG (oneMetal_VP_overlap("rtMetal4", which_cell->get_cell_name(), "", b_cell_buffer),0.1);
 
-		// which_cell->reset_this_pin();
 		which_cell->get_cell_type()->find_outpin()->_reset_all_RECT_access();
 
 		while (_m2_base.empty()) {                 // 如果沒有合法的M2第一根VP, 跑此while
@@ -968,43 +966,46 @@ void design::dodge_pin_VP(cell* which_cell)
 				_M2VPbase_type = 'A';
 				break;
 			}
-			int flag_overlap_with_PG = 0;
+			int flag_overlap_with_PG3= 0, flag_overlap_with_PG4=0;
 			if (_base_pin_rect.horizontal_or_straight() == _M2_dir) {              //VP M2第一根(base pin) 和 M2_dir方向一致
 
 					   // 看M2第一根pin有沒有和 上方任何PG重疊
-				flag_overlap_with_PG=check_overlap(_base_pin_rect.RECT2box(_x_coordinate, _y_coordinate), which_cell->get_buffer_overlap_m3PG(), _Result);     //M3 PG
-				flag_overlap_with_PG= check_overlap(_base_pin_rect.RECT2box(_x_coordinate, _y_coordinate), which_cell->get_buffer_overlap_m4PG(), _Result);     //M4 PG
-				if (flag_overlap_with_PG == 0) {                                //M2第一根VP沒有和上方PG重疊
+				_Result.clear();
+				flag_overlap_with_PG3 =check_overlap(_base_pin_rect.RECT2box(_x_coordinate, _y_coordinate), which_cell->get_buffer_overlap_m3PG(), _Result);     //M3 PG
+				_Result.clear();
+				flag_overlap_with_PG4 = check_overlap(_base_pin_rect.RECT2box(_x_coordinate, _y_coordinate), which_cell->get_buffer_overlap_m4PG(), _Result);     //M4 PG
+				if ((flag_overlap_with_PG3==0) && (flag_overlap_with_PG4== 0)) {                                //M2第一根VP沒有和上方PG重疊
 					_m2_base.push_back(_base_pin_rect);
 					_M2VPbase_type = 'A';
 				}
 			}
 			else {                            //VP M2 pin base 和 M2_dir方向不同
-				int flag_overlap_with_PG = 0;
+				int flag_overlap_with_PG3 = 0, flag_overlap_with_PG4 = 0;
 				// 看M2 pin base有沒有和 上方任何PG重疊
 				// M4 PG 就算有和_base_pin_rect 重疊也可選 ( M2 VP兩根 的走向和M4PG的相同)
 				_Result.clear();
 				if (check_overlap(_base_pin_rect.RECT2box(_x_coordinate, _y_coordinate), which_cell->get_buffer_overlap_m4PG(), _Result) == 1) {  //M4 PG
-					flag_overlap_with_PG = -1;
+					flag_overlap_with_PG4 = 1;
 					for (int i = 0; i < _Result.size(); ++i) {
 						_M4_overlap_PG.push_back(_Result.at(i).first);
 					}
 				}
-				
-				flag_overlap_with_PG = check_overlap(_base_pin_rect.RECT2box(_x_coordinate, _y_coordinate), which_cell->get_buffer_overlap_m3PG(), _Result);  //M3PG
+				_Result.clear();
+				flag_overlap_with_PG3 = check_overlap(_base_pin_rect.RECT2box(_x_coordinate, _y_coordinate), which_cell->get_buffer_overlap_m3PG(), _Result);  //M3PG
 
-				if (flag_overlap_with_PG == 0) {                                //M2 pin base沒有和上方PG重疊
+
+				if ((flag_overlap_with_PG3==0) && (flag_overlap_with_PG4== 0)) {                                //M2 pin base沒有和上方PG重疊
 					_m2_base.push_back(_base_pin_rect);
 					_M2VPbase_type = 'C';
 				}
-				else if (flag_overlap_with_PG == -1) {                    //M2 pin base和上方M4 PG重疊， 但他們走向呈十字 ，可選，可閃避的掉
+				else if ((flag_overlap_with_PG4 == 1)  &&  (flag_overlap_with_PG3!=1)) {                    //M2 pin base和上方M4 PG重疊， 但他們走向呈十字 ，可選，可閃避的掉
 					_m2_base.push_back(_base_pin_rect);
 					_M2VPbase_type = 'B';
 				}
 
 			}                       //VP M2 pin base 和 M2_dir方向不同結束
 		}               //while (pre_vp.empty()
-		cout << __LINE__ <<"   END while (pre_vp.empty())"<< endl;
+		//cout << __LINE__ <<"   END while (pre_vp.empty())"<< endl;
 
 		RECT _temp_rect, _temp_rect2;
 		//////有pin base了 要開始蓋VP了
@@ -1025,7 +1026,7 @@ void design::dodge_pin_VP(cell* which_cell)
 				}
 
 				_Result.clear();
-				if (check_overlap(_temp_rect2.RECT2box(_x_coordinate, _y_coordinate), which_cell->get_buffer_overlap_m4PG(), _Result)) {    //M2第二根和M4PG check overlap
+				if (check_overlap(_temp_rect2.RECT2box(_x_coordinate, _y_coordinate), which_cell->get_buffer_overlap_m4PG(), _Result)==1) {    //M2第二根和M4PG check overlap
 					if (_is_left == 0) {
 						_temp_rect2.Shift(-2 * _spacing, 0);
 						_is_left = 1;
@@ -1175,6 +1176,7 @@ void design::dodge_pin_VP(cell* which_cell)
 				_temp_rect = RECT(point((_m2_base.at(0).Point(1, 'x') + _m2_base.at(0).Point(2, 'x')) / 2, _m2_base.at(0).Point(2, 'y') - _spacing / 2), 0.08, _spacing);            //M2第一根  (middle)
 				_Result.clear();
 				check_overlap(_temp_rect.RECT2box(_x_coordinate,_y_coordinate), which_cell->get_buffer_overlap_m2VP(),_Result);    //check M2第一根有沒有和  M2VP, M3PG重疊
+				_Result.clear();
 				check_overlap(_temp_rect.RECT2box(_x_coordinate, _y_coordinate), which_cell->get_buffer_overlap_m3PG(), _Result);    //check M2第一根有沒有和  M2VP, M3PG重疊
 			       
 				_temp_rect2 = _temp_rect;
@@ -1830,17 +1832,17 @@ void design::make_rtree_M1()
 
 vector<value> design::oneMetal_VP_overlap(string _rTree_index, string _CELL_NAME, string _PIN_NAME, box  _new_VP)
 {
-	cout << "start box with " << _rTree_index<<" overlap "<< endl;
+	//cout << "start box with " << _rTree_index<<" overlap "<< endl;
 	vector<value>_intersect_result;
 	_intersect_result.clear();
 
 		forest[_rTree_index]->query(bgi::intersects(_new_VP), back_inserter(_intersect_result));
-		for (int i = 0; i < _intersect_result.size(); ++i) {
-			if (rTree_value.at(_intersect_result.at(i).second).first == _CELL_NAME && rTree_value.at(_intersect_result.at(i).second).second == _PIN_NAME) {
-				_intersect_result.erase(_intersect_result.begin()+i);
-				break;
-			}
-		}
+		//for (int i = 0; i < _intersect_result.size(); ++i) {
+		//	if (rTree_value.at(_intersect_result.at(i).second).first == _CELL_NAME && rTree_value.at(_intersect_result.at(i).second).second == _PIN_NAME) {
+		//		_intersect_result.erase(_intersect_result.begin()+i);
+		//		break;
+		//	}
+		//}
 		return _intersect_result;
 	}
 
@@ -1858,25 +1860,28 @@ void design::make_PG_rtree_M3M4()
 		_min_y = stod(_VDD_VSS.at(i).at(4)) / _units;
 
 		if (_VDD_VSS.at(i).at(5) == _VDD_VSS.at(i).at(3)) {
-			_max_x = _min_x + stod(_VDD_VSS.at(i).at(2)) / _units;
+			_min_x -= stod(_VDD_VSS.at(i).at(2)) / _units / 2;
+			_max_x = _min_x + stod(_VDD_VSS.at(i).at(2)) / _units ;
 			_max_y= stod(_VDD_VSS.at(i).at(6)) / _units;
 		}
 		else if (_VDD_VSS.at(i).at(6) == _VDD_VSS.at(i).at(4)) {
 			_max_x= stod(_VDD_VSS.at(i).at(5)) / _units;
+			_min_y -= stod(_VDD_VSS.at(i).at(2)) / _units / 2;
 			_max_y = _min_y + stod(_VDD_VSS.at(i).at(2)) / _units;
 		}
 		else { 
 			cout << "nothing equal " << endl; 
 		}
 
-		//cout << _min_x << "  " << _min_y << "  " << _max_x << "  " << _max_y << endl;
+		cout << _min_x << "  " << _min_y << "  " << _max_x << "  " << _max_y << endl;
 		box b(point(_min_x, _min_y), point(_max_x, _max_y));
 		//box b(point(_min_x, _min_y), point(_min_x + 0.5f, _min_y + 0.5f));
 		
 		rTree_value.push_back(make_pair(_VDD_VSS.at(i).at(0), _VDD_VSS.at(i).at(1)));
 		int _rTree_value_index = rTree_value.size() - 1;
-		if (_VDD_VSS.at(i).at(1) == "Metal3")		RTREE_M3->insert(make_pair(b, _rTree_value_index) );
-		else if (_VDD_VSS.at(i).at(1)=="Matel4")	RTREE_M4->insert(make_pair(b, _rTree_value_index));
+		if (_VDD_VSS.at(i).at(1) == "Metal3") { RTREE_M3->insert(make_pair(b, _rTree_value_index));    cout << "one in RTREE_M3  " << endl; }
+		else if (_VDD_VSS.at(i).at(1) == "Metal4") { RTREE_M4->insert(make_pair(b, _rTree_value_index));  cout << "one in RTREE_M4  " << endl;}
+		else    cout << "this PG do not insert to any RTree !!!!" << endl;
 	}
 	//  forest  push_back()  RTREE_M3, RTREE_M4  
 	forest.insert({ "rtMetal3", RTREE_M3 });
