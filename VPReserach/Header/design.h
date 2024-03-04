@@ -1,5 +1,4 @@
 #pragma once
-#include"cell_type.h"
 #include "layer.h"
 #include "row.h"
 
@@ -9,25 +8,18 @@
 #include<fstream>
 #include <deque>
 
-#include <boost/geometry.hpp>
-#include <boost/geometry/index/rtree.hpp>
-
-#include <boost/geometry/geometries/point.hpp>
-#include <boost/geometry/geometries/box.hpp>
 #include <boost/geometry/algorithms/overlaps.hpp>
 #include <boost/geometry/geometries/polygon.hpp>
+#include <boost/geometry/index/rtree.hpp>
 
 
 using namespace std;
 
-namespace bg = boost::geometry;
-namespace bgi = boost::geometry::index;
-
-typedef bg::model::point<float, 2, bg::cs::cartesian> point;
-typedef bg::model::box<point> box;
-typedef std::pair<box, unsigned> value;
+//typedef std::pair<box, unsigned> value;
+// 
 typedef bgi::rtree< value, bgi::quadratic<16>> rTree;
-typedef bg::model::polygon<point> polygon;
+// 
+//ypedef bg::model::polygon<point> polygon;
 //typedef std::pair<box, unsigned> value;
 
 class design {

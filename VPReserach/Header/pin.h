@@ -2,6 +2,7 @@
 #include<iostream>
 #include<vector>
 #include<string>
+
 #include <boost/geometry.hpp>
 #include <boost/geometry/geometries/point.hpp>
 #include <boost/geometry/geometries/box.hpp>
@@ -69,9 +70,9 @@ public:
 		else return 1;					//vertical
 	};
 
-	box RECT2box() {
-		return box(point(Point(1, 'x'), Point(1, 'y')), point(Point(2, 'x'), Point(2, 'y')));
-	};
+	// box RECT2box() {
+	//	return box(point(Point(1, 'x'), Point(1, 'y')), point(Point(2, 'x'), Point(2, 'y')));
+	//};
 	box RECT2box(double _X, double _Y) {
 		return box(point(Point(1, 'x')+_X, Point(1, 'y')+ _Y), point(Point(2, 'x')+ _X, Point(2, 'y')+ _Y));
 	};
@@ -127,7 +128,6 @@ private:
 
 class pin
 {
-
 public:
 	pin(string NAME,string DIR,string USE):
 		_pin_name(NAME), _dir(DIR), _use(USE){}

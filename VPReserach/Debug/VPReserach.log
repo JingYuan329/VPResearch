@@ -188,6 +188,7 @@ C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1183,41): warni
           [
               CoordinateType=float
           ]
+<<<<<<< HEAD
 C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1293,20): warning C4018: '<': signed/unsigned 不相符
 C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1379,21): warning C4018: '<': signed/unsigned 不相符
 C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1412,20): warning C4018: '<': signed/unsigned 不相符
@@ -201,47 +202,96 @@ C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1673,23): warni
 C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1782,20): warning C4018: '<': signed/unsigned 不相符
 C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1810,21): warning C4018: '<': signed/unsigned 不相符
 C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1830,49): warning C4244: '引數': 將 'double' 轉換為 'const CoordinateType'，由於類型不同，可能導致資料遺失
+=======
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1314,20): warning C4018: '<': signed/unsigned 不相符
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1400,21): warning C4018: '<': signed/unsigned 不相符
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1433,20): warning C4018: '<': signed/unsigned 不相符
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1465,24): warning C4018: '<': signed/unsigned 不相符
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1520,23): warning C4018: '<': signed/unsigned 不相符
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1530,24): warning C4018: '<': signed/unsigned 不相符
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1594,26): warning C4018: '<': signed/unsigned 不相符
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1625,23): warning C4018: '<': signed/unsigned 不相符
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1689,21): warning C4018: '<': signed/unsigned 不相符
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1694,23): warning C4018: '<': signed/unsigned 不相符
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1803,20): warning C4018: '<': signed/unsigned 不相符
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1831,21): warning C4018: '<': signed/unsigned 不相符
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1851,49): warning C4244: '引數': 將 'double' 轉換為 'const CoordinateType'，由於類型不同，可能導致資料遺失
+>>>>>>> 5144e15 (caseC 功能改善)
           with
           [
               CoordinateType=float
           ]
+<<<<<<< HEAD
 C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1830,24): warning C4244: '引數': 將 'double' 轉換為 'const CoordinateType'，由於類型不同，可能導致資料遺失
+=======
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1851,24): warning C4244: '引數': 將 'double' 轉換為 'const CoordinateType'，由於類型不同，可能導致資料遺失
+>>>>>>> 5144e15 (caseC 功能改善)
           with
           [
               CoordinateType=float
           ]
+<<<<<<< HEAD
 C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1831,41): warning C4244: '引數': 將 'double' 轉換為 'const CoordinateType'，由於類型不同，可能導致資料遺失
+=======
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1852,41): warning C4244: '引數': 將 'double' 轉換為 'const CoordinateType'，由於類型不同，可能導致資料遺失
+>>>>>>> 5144e15 (caseC 功能改善)
           with
           [
               CoordinateType=float
           ]
+<<<<<<< HEAD
 C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1831,17): warning C4244: '引數': 將 'double' 轉換為 'const CoordinateType'，由於類型不同，可能導致資料遺失
+=======
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1852,17): warning C4244: '引數': 將 'double' 轉換為 'const CoordinateType'，由於類型不同，可能導致資料遺失
+>>>>>>> 5144e15 (caseC 功能改善)
           with
           [
               CoordinateType=float
           ]
+<<<<<<< HEAD
 C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1873,20): warning C4018: '<': signed/unsigned 不相符
 C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1893,23): warning C4244: '引數': 將 'double' 轉換為 'const CoordinateType'，由於類型不同，可能導致資料遺失
+=======
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1894,20): warning C4018: '<': signed/unsigned 不相符
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1914,23): warning C4244: '引數': 將 'double' 轉換為 'const CoordinateType'，由於類型不同，可能導致資料遺失
+>>>>>>> 5144e15 (caseC 功能改善)
           with
           [
               CoordinateType=float
           ]
+<<<<<<< HEAD
 C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1893,15): warning C4244: '引數': 將 'double' 轉換為 'const CoordinateType'，由於類型不同，可能導致資料遺失
+=======
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1914,15): warning C4244: '引數': 將 'double' 轉換為 'const CoordinateType'，由於類型不同，可能導致資料遺失
+>>>>>>> 5144e15 (caseC 功能改善)
           with
           [
               CoordinateType=float
           ]
+<<<<<<< HEAD
 C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1893,46): warning C4244: '引數': 將 'double' 轉換為 'const CoordinateType'，由於類型不同，可能導致資料遺失
+=======
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1914,46): warning C4244: '引數': 將 'double' 轉換為 'const CoordinateType'，由於類型不同，可能導致資料遺失
+>>>>>>> 5144e15 (caseC 功能改善)
           with
           [
               CoordinateType=float
           ]
+<<<<<<< HEAD
 C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1893,38): warning C4244: '引數': 將 'double' 轉換為 'const CoordinateType'，由於類型不同，可能導致資料遺失
+=======
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1914,38): warning C4244: '引數': 將 'double' 轉換為 'const CoordinateType'，由於類型不同，可能導致資料遺失
+>>>>>>> 5144e15 (caseC 功能改善)
           with
           [
               CoordinateType=float
           ]
+<<<<<<< HEAD
 C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1925,20): warning C4018: '<': signed/unsigned 不相符
 C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1289): warning C4715: 'design::choose_specify_dir_pin_rect': 不是所有控制路徑都傳回值
+=======
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1946,20): warning C4018: '<': signed/unsigned 不相符
+C:\Users\cnctu\source\repos\VPResearch\VPReserach\Cpp\design.cpp(1310): warning C4715: 'design::choose_specify_dir_pin_rect': 不是所有控制路徑都傳回值
+>>>>>>> 5144e15 (caseC 功能改善)
 C:\Users\cnctu\source\repos\VPResearch\VPReserach\Header\pin.h(63): warning C4715: 'RECT::Point': 不是所有控制路徑都傳回值
   VPReserach.vcxproj -> C:\Users\cnctu\source\repos\VPResearch\Debug\VPReserach.exe

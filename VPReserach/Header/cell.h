@@ -3,19 +3,7 @@
 #include<iostream>
 #include<string>
 
-#include <boost/geometry.hpp>
-#include <boost/geometry/index/rtree.hpp>
-
-#include <boost/geometry/geometries/point.hpp>
-#include <boost/geometry/geometries/box.hpp>
-
 using namespace std;
-
-namespace bg = boost::geometry;
-namespace bgi = boost::geometry::index;
-
-typedef bg::model::point<float, 2, bg::cs::cartesian> point;
-typedef bg::model::box<point> box;
 typedef std::pair<box, unsigned> value;
 class cell_type;
 
