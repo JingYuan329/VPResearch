@@ -72,6 +72,10 @@ public:
 	void make_PG_rtree_M3M4();
 	void add_rtree(string _Metal, string _CELL_NAME, string _PIN_NAME,box _new_rect);
 
+	box FineTuine(const box &_nowVP, const vector<value> & overlap_box);
+
+	int caseC_count = 0;
+
 private:
 	double _units=0;
 
