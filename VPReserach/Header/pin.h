@@ -35,12 +35,6 @@ public:
 		Point(2, 'x') = RU_x;
 		Point(2, 'y') = RU_y;
 	};
-	RECT(box B) {
-		Point(1, 'x') = B.min_corner().get<0>();
-		Point(1, 'y') = B.min_corner().get<1>();
-		Point(2, 'x') = B.max_corner().get<0>();
-		Point(2, 'y') = B.max_corner().get<1>();
-	};
 	RECT() {
 		_RECT_ = make_pair(make_pair(0, 0), make_pair(0, 0));
 	};
@@ -83,24 +77,8 @@ public:
 	};
 	void set_access_flag(int x) { _access_flag = x;};
 	int get_access_flag() {	return _access_flag;};
-
-	pair<double, double>  get_center_point() {
-		return make_pair((Point(0, 'x') + Point(1, 'x')) / 2.0, (Point(0, 'y') + Point(1, 'y')) / 2.0);
-	}
-	void  get_center_point(point & p) {
-		p = point((Point(0, 'x') + Point(1, 'x')) / 2.0, (Point(0, 'y') + Point(1, 'y')) / 2.0);
-	}
-	pair<double, double> center_dis(RECT &_rect) {
-		pair<double, double> this_p = this->get_center_point();
-		pair<double, double> other_p = _rect.get_center_point();
-		return make_pair(this_p.first - other_p.first, this_p.second - other_p.second);
-	}
-	double getW() {
-		return Point(2, 'x') - Point(1, 'x');
-	};
-	double getH() {
-		return Point(2, 'y') - Point(1, 'y');
-	};
+	
+	//get_point(2, x) = 200.200;
 private:
 	pair<pair<double, double>, pair<double, double>>_RECT_;
 	int _access_flag = 0;

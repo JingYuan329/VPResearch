@@ -23,7 +23,6 @@ int main(int argc, char *argv[]) {
 	//Design.make_rtree_M1();
 	Design.make_PG_rtree_M3M4();
 	Design.insert_dodge_VP(0.1);
-	cout <<"caseC_count = " << Design.caseC_count << endl;
 	Design.output_dodge_lef_file(argv[3]);
 	Design.output_dodge_def_file(argv[4]);
 

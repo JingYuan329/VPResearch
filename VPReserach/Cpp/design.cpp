@@ -1172,41 +1172,25 @@ void design::dodge_pin_VP(cell* which_cell)
 			     pre_vp.push_back(_temp_rect2);
 		}
 		else if (_M2VPbase_type == 'C') {
-		caseC_count++;
 			if (_m2_base.at(0).horizontal_or_straight() == 0) { // base pin is H
-				_temp_rect = RECT(
-					point((_m2_base.at(0).Point(1, 'x') + _m2_base.at(0).Point(2, 'x')) / 2, _m2_base.at(0).Point(2, 'y') - _spacing / 2),
-					0.08, _spacing);            //M2第一根  (middle)
-			}
-			else {
-				_temp_rect = RECT(
-					point(_m2_base.at(0).Point(2, 'x') - _spacing / 2, _m2_base.at(0).Point(1, 'y') + 0.15),
-					_spacing, 0.08);      //M2第一根  (down)
-			}
-			box _temp_box = _temp_rect.RECT2box(_x_coordinate, _y_coordinate);
-			vector<value> _Result2;
-			_Result.clear();
-			check_overlap(_temp_box, which_cell->get_buffer_overlap_m2VP(), _Result);    //check M2第一根有沒有和  M2VP, 重疊
-			check_overlap(_temp_box, which_cell->get_buffer_overlap_m3PG(), _Result2);    //check M2第一根有沒有和  M3PG重疊
+				_temp_rect = RECT(point((_m2_base.at(0).Point(1, 'x') + _m2_base.at(0).Point(2, 'x')) / 2, _m2_base.at(0).Point(2, 'y') - _spacing / 2), 0.08, _spacing);            //M2第一根  (middle)
+				_Result.clear();
+				check_overlap(_temp_rect.RECT2box(_x_coordinate,_y_coordinate), which_cell->get_buffer_overlap_m2VP(),_Result);    //check M2第一根有沒有和  M2VP, M3PG重疊
+				_Result.clear();
+				check_overlap(_temp_rect.RECT2box(_x_coordinate, _y_coordinate), which_cell->get_buffer_overlap_m3PG(), _Result);    //check M2第一根有沒有和  M2VP, M3PG重疊
+			       
+				_temp_rect2 = _temp_rect;
+				_temp_rect2.Shift( _spacing, 0);
 
-			// FineTuine (VP1)
-			_Result.insert(_Result.end(), _Result2.begin(), _Result2.end());
-			box _temp_box_tuine = FineTuine(_temp_box, _Result);
-			//  build(VP1);
-			_temp_rect = RECT(_temp_box_tuine);
 
-			//	build(VP2);
-			_temp_rect2 = _temp_rect;
-			if (_m2_base.at(0).horizontal_or_straight() == 0) { // base pin is H
-				_temp_rect2.Shift(_spacing, 0);
 			}
-			else {
-				_temp_rect2.Shift(0, _spacing);
+			else {           // base pin is V
+				_temp_rect = RECT(point(_m2_base.at(0).Point(2, 'x') - _spacing / 2, _m2_base.at(0).Point(1, 'y') + 0.15) , _spacing, 0.08);      //M2第一根  (down)
+
+				_temp_rect2 = _temp_rect;
+				_temp_rect2.Shift(0,_spacing);
 			}
-			// (VP2 is overlap ? ) { 尚未做
-			//	FineTuine(main_box(VP2), overlap_box);
-			//	build(VP1);
-			//}
+
 			pre_vp.push_back(_temp_rect);
 			pre_vp.push_back(_temp_rect2);
 
@@ -1914,120 +1898,3 @@ void design::add_rtree(string _Metal, string _CELL_NAME, string _PIN_NAME,box _n
 	int _rTree_value_index = rTree_value.size() - 1;
 	forest["rt" + _Metal]->insert(make_pair(_new_rect, _rTree_value_index));
 }
-
-box design::FineTuine(const box& _nowVP, const vector<value>& overlap_box) {
-	vector<pair<double, double>> deltaXY;
-	vector<pair<double, double>> R_XY;
-	vector<double>MoveTable[4];     //  [0]=>x+, [1]=>x-, [2]=>y+, [3]=>y-
-	double MoveList[4] = { -1,-1,-1,-1 };          //  [0]=>x+, [1]=>x-, [2]=>y+, [3]=>y-
-
-	RECT _nowbox(_nowVP);
-	for (int i = 0; i < overlap_box.size(); ++i) {
-		RECT temp_box(overlap_box.at(i).first);
-		pair<double, double> nowR_XY = make_pair((temp_box.getW() + _nowbox.getW()) / 2, (temp_box.getH() + _nowbox.getH()) / 2); // VP與障礙中心距(XY)，至少多少才不壓到
-		pair<double, double> nowdeltaXY = _nowbox.center_dis(temp_box);  // 當前VP與障礙的距離
-
-		double moveX = abs(nowR_XY.first - abs(nowdeltaXY.first));              // VP最短移動多少，可以離開 (X)
-		double moveY = abs(nowR_XY.second - abs(nowdeltaXY.second)); // VP最短移動多少，可以離開 (Y)
-
-		R_XY.push_back(nowR_XY);
-		deltaXY.push_back(nowdeltaXY);
-
-		if (moveX < moveY) {   // 移動X比較賺
-			if (nowdeltaXY.first > 0) {  // 1,4 象限
-				if (moveX > MoveList[0]) { MoveList[0] = moveX;}
-				MoveTable[0].push_back(moveX); MoveTable[1].push_back(0);
-				MoveTable[2].push_back(0); MoveTable[3].push_back(0);
-			}
-			else {                                      // 2,3 象限
-				if (moveX > MoveList[1]) { MoveList[1] = moveX;}
-				MoveTable[0].push_back(0); MoveTable[1].push_back(moveX);
-				MoveTable[2].push_back(0); MoveTable[3].push_back(0);
-			}
-		}
-		else {                                // 移動Y比較賺
-			if (nowdeltaXY.second > 0) {  // 1,2 象限
-				if (moveY > MoveList[2]) { MoveList[2] = moveY; }
-				MoveTable[0].push_back(0); MoveTable[1].push_back(0);
-				MoveTable[2].push_back(moveY); MoveTable[3].push_back(0);
-			}
-			else {                                             // 3,4 象限
-				if (moveY > MoveList[3]) { MoveList[3] = moveY;}
-				MoveTable[0].push_back(0); MoveTable[1].push_back(0);
-				MoveTable[2].push_back(0); MoveTable[3].push_back(moveY);
-			}
-		}
-	}
-
-	if (MoveList[0] != -1 && MoveList[1] != -1) { // 若，+x 和 -x 都要移動，強制修正往同一邊
-		// 往哪個方向走最少，強制往那個方向
-		if (MoveList[0] < MoveList[1]) {   //強制往1,2象限走 
-			//找往下走最少的人
-			std::vector<double>::iterator it = std::min_element(MoveTable[1].begin(), MoveTable[1].end());
-			int minPosition = std::distance(MoveTable[1].begin(), it);
-			//算往反向走 要走多少
-			double move_dis_new = deltaXY.at(minPosition).first + R_XY.at(minPosition).first;
-			if (move_dis_new > MoveList[0]) {
-				MoveList[0] = move_dis_new;
-			}
-			MoveList[1] = -1;
-		}
-		else {  //強制往3,4象限走
-			//找往上走最少的人
-			std::vector<double>::iterator it = std::min_element(MoveTable[0].begin(), MoveTable[0].end());
-			int minPosition = std::distance(MoveTable[0].begin(), it);
-			//算往反向走 要走多少
-			double move_dis_new = deltaXY.at(minPosition).first + R_XY.at(minPosition).first;
-			if (move_dis_new > MoveList[1]) {
-				MoveList[1] = move_dis_new;
-			}
-			MoveList[0] = -1;
-		}
-	}
-
-	if (MoveList[2] != -1 && MoveList[3] != -1) { // 若， + y和 -y 都要移動，強制修正往同一邊
-		if (MoveList[2] < MoveList[3]) {   //強制往1,4象限走
-			//找往左走最少的人
-			std::vector<double>::iterator it = std::min_element(MoveTable[3].begin(), MoveTable[3].end());
-			int minPosition = std::distance(MoveTable[3].begin(), it);
-
-			//算往反向走 要走多少
-			double move_dis_new = deltaXY.at(minPosition).second + R_XY.at(minPosition).second;
-			if (move_dis_new > MoveList[2]) {
-				MoveList[2] = move_dis_new;
-			}
-			MoveList[3] = -1;
-		}
-		else {//強制往2,3象限走
-			std::vector<double>::iterator it = std::min_element(MoveTable[2].begin(), MoveTable[2].end());
-			int minPosition = std::distance(MoveTable[2].begin(), it);
-
-			//算往反向走 要走多少
-			double move_dis_new = deltaXY.at(minPosition).second + R_XY.at(minPosition).second;
-			if (move_dis_new > MoveList[3]) {
-				MoveList[3] = move_dis_new;
-			}
-			MoveList[2] = -1;
-		}
-	}
-
-	for (int i = 0; i < 4; i++) {
-		if (MoveList[i] == -1) {
-			MoveList[i] = 0;
-		}
-	}
-	MoveList[0] -=  MoveList[1];
-	MoveList[2] -=  MoveList[3];
-
-	_nowbox.Shift(MoveList[0], MoveList[2]);
-
-	return _nowbox.RECT2box();
-
-	// 檢查有沒有和base重疊?
-}
-//FineTuine(main_box(VP1), overlap_box);
-//build(VP2);
-//(VP2 is overlap ? ) {
-//	FineTuine(main_box(VP2), overlap_box);
-//	build(VP1);
-//}
