@@ -1,6 +1,6 @@
 #pragma once
-#include"cell_type.h"
 #include<map>
+#include"cell.h"
 using namespace std;
 class row
 {

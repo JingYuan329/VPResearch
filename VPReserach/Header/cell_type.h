@@ -2,8 +2,6 @@
 #include"pin.h"
 #include"cell.h"
 using namespace std;
-class cell;
-
 class cell_type
 {
 public:
